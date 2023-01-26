@@ -21,5 +21,12 @@
   "bugs": {
     "url": "https://github.com/BradyAmundson/Squishi/issues"
   },
-  "homepage": "https://github.com/BradyAmundson/Squishi#readme"
+  "homepage": "https://github.com/BradyAmundson/Squishi#readme",
+  "devDependencies": {
+    "c8": "^7.12.0",
+    "mocha": "^10.2.0"
+  },
+  "dependencies": {
+    "ohm-js": "^16.6.0"
+  }
 }
