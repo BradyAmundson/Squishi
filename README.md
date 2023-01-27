@@ -2,11 +2,11 @@
 
 
 Features:
--Statically typed
--Type inference
--Simplified String functions using emjis
--Data Structures: Arraylists, linkedlists, simplified superclasses
--List Comprehension
+- Statically typed
+- Type inference
+- Simplified String functions using emjis
+- Data Structures: Arraylists, linkedlists, simplified superclasses
+- List Comprehension
 
 Code Examples
 Simplified print statements
