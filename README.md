@@ -7,6 +7,8 @@ Features:
 - Simplified String functions using emjis
 - Data Structures: Arraylists, linkedlists, simplified superclasses
 - List Comprehension
+- Simplified error messages using emojis
+
 
 Code Examples
 Simplified print statements
@@ -93,6 +95,4 @@ while (n < 3) {
 🔁 n < 3
   n++
 ```
-Simplified error messages using emojis
 
-Types: List of type names
