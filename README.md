@@ -1,13 +1,17 @@
 # Squishi!
 ![](./assets/squishi_logo.jpeg)
 
+Origin Story:
+Squishi came about when we decided we wanted a simpler, cleaner, and more visual way to represent our ideas. We prioritize concise syntax and want to make features like list comprehension and class merging easier for each programmer. They say a picture is worth a thousand words and that's why we here at Squishi implement emojis into our language. Emojis make the purpose of each function more understandable and can be a helpful visual learning tool for those just beginning to explore programming. 🫳🎤
+
 Features:
 - Statically typed
 - Type inference
 - Simplified String functions using emjis
-- Data Structures: Arraylists, linkedlists, simplified superclasses
+- Data Structures: Arraylists, linkedlists
 - List Comprehension
 - Simplified error messages using emojis
+- Class absorbtion/simplified superclasses
 
 
 Code Examples
