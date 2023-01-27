@@ -1,5 +1,5 @@
 # Squishi!
-
+![](./assets/squishi_logo.jpeg)
 
 Features:
 - Statically typed
