@@ -1,4 +1,14 @@
-# Squishi
+# Squishi!
+
+
+Features:
+-Statically typed
+-Type inference
+-Simplified String functions using emjis
+-Data Structures: Arraylists, linkedlists, simplified superclasses
+-List Comprehension
+
+Code Examples
 Simplified print statements
 ```
 console.log("Hello, world!");
@@ -6,18 +16,28 @@ console.log("Hello, world!");
 ```
 🗣️ "Hello, world!"
 ```
-Data Structures: Arraylists, linkedlists, simplified superclasses
-```
 ```
 List comprehension (one-liner for loops, can also be nested)
 ```
+python:
+a = [1,2,10,6]
+example = [4 * x for x in a]
+
+Squishi:
+✏️ example = [4*x 🔄 x 📤 a ]
+
+
 ```
 Statically typed
 ```
 ```
 Type inference
 ```
+javascript:
+let x = 3;
 
+squishi:
+✏️ x = 3;
 ```
 Simplified String functions using emojis
 ```
@@ -61,7 +81,7 @@ for (let step = 0; step < 5; step++) {
 }
 ```
 ```
-🔄 ▶️ let step = 0 ✋ step < 5 ⏭️ step++
+🔄 ▶️ ✏️ step = 0 ✋ step < 5 ⏭️ step++
   🗣️ 'Walking east one step'
 ```
 ```
