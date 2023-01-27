@@ -16,8 +16,8 @@ console.log("Hello, world!");
 ```
 🗣️ "Hello, world!"
 ```
-```
 List comprehension (one-liner for loops, can also be nested)
+
 ```
 python:
 a = [1,2,10,6]
@@ -25,19 +25,19 @@ example = [4 * x for x in a]
 
 Squishi:
 ✏️ example = [4*x 🔄 x 📤 a ]
+```
 
 
-```
-Statically typed
-```
-```
+
 Type inference
 ```
+
 javascript:
 let x = 3;
 
 squishi:
 ✏️ x = 3;
+
 ```
 Simplified String functions using emojis
 ```
