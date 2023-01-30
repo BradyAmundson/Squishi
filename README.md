@@ -1,6 +1,8 @@
 # Squishi!
 ![](./assets/squishi_logo.jpeg)
 
+Makena Robison, Brady Amundson, Tori Wei
+
 Origin Story:
 Squishi came about when we decided we wanted a simpler, cleaner, and more visual way to represent our ideas. We prioritize concise syntax and want to make features like list comprehension and class merging easier for each programmer. They say a picture is worth a thousand words and that's why we here at Squishi implement emojis into our language. Emojis make the purpose of each function more understandable and can be a helpful visual learning tool for those just beginning to explore programming. 🫳🎤
 
