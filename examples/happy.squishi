@@ -1,0 +1,6 @@
+pencil varX = "yup";
+speak word;
+y = x < 3;
+if y:
+   speak yo;
+stop

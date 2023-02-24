@@ -1,0 +1,69 @@
+Squishi {
+	Program 		= Statement+
+    Statement 		= PrintStatement
+    				| VarDeclaration
+                    | AssignStmt
+                    | ForStmt
+                    | Function
+                    | IfStmt
+                    | ElseStmt
+                    | ElseIfStmt
+    PrintStatement 	= speak Exp ";"
+    VarDeclaration	= pencil id "=" Exp ";"
+    AssignStmt		= id "=" Exp ";"
+    ForStmt			= for VarDeclaration stop Exp fastfwd Exp (Statement ";")+ "stop"
+    WhileStmt		= while Exp Statement+ "stop"
+    IfStmt          = if Exp ":" Statement+ "stop"
+    ElseStmt        = else ":" Statement+ "stop"
+    ElseIfStmt      = elseIf Exp ":" Statement+ "stop"
+    id				= ~keyword idchar+
+    idchar			= letter | "!" | ","
+    keyword			= speak | pencil | for | step | stop | fastfwd | while | true | false | else | if | elseIf
+    Var				= id
+
+    Exp             = ("-" | "!") Exp8                        -- unary
+                    | Exp1 "if" Exp1 "otherwise" Exp                   -- ternary
+                    | Exp1
+    Exp1 			= Exp1 "or" Exp2					--or
+    				| Exp2
+    Exp2			= Exp2 "and" Exp3				--and
+    				| Exp3
+    Exp3			= Exp3 ("<=" | "<" | "==" | "!=" | ">=" | ">") Exp4 --op
+    				| Exp4
+    Exp4			= Exp4 ("+" | "-") Exp5 --plusminus
+    				| Exp5
+    Exp5			= Exp5 ("*" | "/" | "%") Exp6 --multdividemod
+    				| Exp6
+    Exp6			= Exp6 "**" Exp7 --exponent
+    				| Exp7
+    Exp7			= Exp7 "[" Exp+ "]" Exp8 --brackets
+                    | Exp8
+    Exp8            = "(" Exp ")"      --parens
+    				| Term
+
+
+    BooleanVal		= true | false
+    Term 			= numeral
+    	 			| stringliteral
+                    | Var
+     	            | BooleanVal
+                    | Array
+    Function        = id "(" ListOf<id, ","> ")" Statement+
+    MethodCall      = Term "." id ("(" ListOf<Exp, ","> ")")?
+    pencil			= "pencil" ~idchar
+    speak			= "speak" ~idchar
+    for				= "for" ~idchar
+    step			= "step" ~idchar
+    stop			= "stop" ~idchar
+    fastfwd			= "fastfwd" ~idchar
+    Array           = "[" ListOf<Term, ","> "]"
+    while           = "while" ~idchar
+    true            = "true" ~idchar
+    false           = "false" ~idchar
+    if              = "if" ~idchar
+    else            = "else" ~idchar
+    elseIf          = "elseIf" ~idchar
+    numeral 		= digit+ ("." digit+)?
+    stringliteral 	= "\"" (~"\""any)* "\""
+    space      	   += "//" (~"\n" any)*				--comment
+}
