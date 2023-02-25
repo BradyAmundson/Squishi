@@ -6,40 +6,40 @@ Squishi {
                     | ForStmt
                     | Function
                     | IfStmt
-                    | ElseStmt
-                    | ElseIfStmt
     PrintStatement 	= speak Exp ";"
     VarDeclaration	= pencil id "=" Exp ";"
     AssignStmt		= id "=" Exp ";"
-    ForStmt			= for VarDeclaration stop Exp fastfwd Exp (Statement ";")+ "stop"
-    WhileStmt		= while Exp Statement+ "stop"
-    IfStmt          = if Exp ":" Statement+ "stop"
-    ElseStmt        = else ":" Statement+ "stop"
-    ElseIfStmt      = elseIf Exp ":" Statement+ "stop"
+    ForStmt			= for VarDeclaration stop Exp fastfwd Exp (Statement ";")+ stop
+    WhileStmt		= while Exp Statement+ stop
+    IfStmt          = if Exp ":" Statement+ stop else Statement+ stop
+    ElseStmt        = else ":" Statement+ stop
+    ElseIfStmt      = elseIf Exp ":" Statement+ stop
     id				= ~keyword idchar+
     idchar			= letter | "!" | ","
     keyword			= speak | pencil | for | step | stop | fastfwd | while | true | false | else | if | elseIf
     Var				= id
 
     Exp             = ("-" | "!") Exp8                        -- unary
-                    | Exp1 "if" Exp1 "otherwise" Exp                   -- ternary
                     | Exp1
-    Exp1 			= Exp1 "or" Exp2					--or
-    				| Exp2
-    Exp2			= Exp2 "and" Exp3				--and
+    Exp1            = Exp1 "if" Exp1 "otherwise" Exp                   -- ternary
+                    | Exp2
+    Exp2			= Exp2 "or" Exp3					--or
     				| Exp3
-    Exp3			= Exp3 ("<=" | "<" | "==" | "!=" | ">=" | ">") Exp4 --op
+    Exp3			= Exp3 "and" Exp4				--and
     				| Exp4
-    Exp4			= Exp4 ("+" | "-") Exp5 --plusminus
+    Exp4			= Exp4 ("<=" | "<" | "==" | "!=" | ">=" | ">") Exp5 --op
     				| Exp5
-    Exp5			= Exp5 ("*" | "/" | "%") Exp6 --multdividemod
+    Exp5			= Exp5 ("+" | "-") Exp6 --plusminus
     				| Exp6
-    Exp6			= Exp6 "**" Exp7 --exponent
+    Exp6			= Exp6 ("*" | "/" | "%") Exp7 --multdivmod
     				| Exp7
-    Exp7			= Exp7 "[" Exp+ "]" Exp8 --brackets
-                    | Exp8
-    Exp8            = "(" Exp ")"      --parens
+    Exp7			= Exp7 "**" Exp8 --exponent
+    				| Exp8
+    Exp8			= "[" Exp "]" --brackets
+                    | Exp9
+    Exp9            = "(" Exp ")"      --parens
     				| Term
+                    | MethodCall
 
 
     BooleanVal		= true | false

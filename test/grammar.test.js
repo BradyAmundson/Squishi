@@ -14,18 +14,22 @@ const syntaxChecks = [
   ["end of program inside comment", "speak (0); // yay"],
   ["comments with no text are ok", "speak (1);//\nspeak (0);//"],
   ["non-Latin letters in identifiers", "コンパイラ = 100;"],
+  ["how to assign a variable", "pencil x = 3;"],
+  ["how to do an assignment statement", "x = 3;"],
 ]
 
 const syntaxErrors = [
   ["non-letter in an identifier", "ab😭c = 2", /Line 1, col 3/],
   ["malformed number", "x= 2.", /Line 1, col 6/],
   ["missing semicolon", "x = 3 y = 1", /Line 1, col 7/],
-  ["a non-operator", "speak (7 * ((2 _ 3)", /Line 1, col 15/],
+  ["a non-operator", "speak (7 * ((2 _ 3)", /Line 1, col 16/],
   ["an expression starting with a )", "x = );", /Line 1, col 5/],
   ["a statement starting with expression", "x * 5;", /Line 1, col 3/],
   ["an illegal statement on line 2", "speak (5);\nx * 5;", /Line 2, col 3/],
   ["a statement starting with a )", "speak (5);\n) * 5", /Line 2, col 1/],
   ["an expression starting with a *", "x = * 71;", /Line 1, col 5/],
+  ["a variable declaration without semicolon", "pencil varX = \"yup\"", /Line 1, col 20/],
+  ["an expression without a closed bracket", "z = x * [4+2", /Line 1, col 13/],
 ]
 
 describe("The grammar", () => {

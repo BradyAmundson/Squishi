@@ -1,6 +1,1 @@
-pencil varX = "yup";
-speak word;
-y = x < 3;
-if y:
-   speak yo;
-stop
+z = x * [4+2];
