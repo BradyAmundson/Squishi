@@ -7,7 +7,7 @@ export class Program {
 }
 
 export class PrintStatement {
-  constrcutor(argument) {
+  constructor(argument) {
     this.argument = argument
   }
 }

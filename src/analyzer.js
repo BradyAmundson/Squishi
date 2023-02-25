@@ -5,7 +5,7 @@ import * as core from "./core.js"
 const squishiGrammar = ohm.grammar(fs.readFileSync("src/squishi.ohm"))
 
 // Throw an error message that takes advantage of Ohm's messaging
-function error(message, node) {
+export function error(message, node) {
   if (node) {
     throw new Error(`${node.source.getLineAndColumnMessage()}${message}`)
   }
