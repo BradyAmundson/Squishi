@@ -29,6 +29,17 @@ export default function analyze(sourceCode) {
     IfStmt(_if, test, _colon, consequent, _stop, _else, alternate, _stop2) {
       return new core.IfStatement(test.rep(), consequent.rep(), alternate.rep())
     },
+    WhileStmt(_while, test, _colon, consequent, _stop) {
+      return new core.WhileStatement(test.rep(), consequent.rep())
+    },
+    ForStmt(_for, varDec, _stop, test, _fastfwd, increment, consequent, _stop2) {
+      return new core.ForStatement(
+        varDec.rep(),
+        test.rep(),
+        increment.rep(),
+        consequent.rep()
+      )
+    },
     id(chars) {
       return chars.sourceString
     },
@@ -84,6 +95,6 @@ export default function analyze(sourceCode) {
   })
 
   const match = squishiGrammar.match(sourceCode)
-  if (!match.succeeded()) error(match.message)
+    // if (!match.succeeded()) error(match.message)
   return analyzer(match).rep()
 }

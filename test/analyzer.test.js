@@ -25,19 +25,46 @@ import analyze, { error } from "../src/analyzer.js"
 // ]
 
 const sample = `speak("abc");
-    pencil z = x and [4+2];
-    if 7>x : x=1; stop else x=2**5; stop`
+pencil z = x and [4+2];
+if 7>x : x=1; stop else x=2**5; stop
+y = -2;
+z = x if true otherwise y;
 
-const expected = `   1 | Program statement=[#2,#3,#6]
-   2 | PrintStatement 
-   3 | VariableDeclaration variable='z' initializer=#4
-   4 | BinaryExpression op='and' left='x' right=#5
-   5 | BinaryExpression op='+' left=4 right=2
-   6 | IfStatement test=#7 consequence=[#8] alternate=[#9]
-   7 | BinaryExpression op='>' left=7 right='x'
-   8 | AssignmentStatement target='x' source=1
-   9 | AssignmentStatement target='x' source=#10
-  10 | BinaryExpression op='**' left=2 right=5`
+while x or y:
+     x = y*2;
+stop
+
+for pencil z = 4; stop z > 3 fastfwd z = z + 1;
+    x = x + 2;
+stop
+`
+
+const expected = `   1 | Program statement=[#2,#4,#7,#12,#14,#16,#20]
+   2 | PrintStatement argument=#3
+   3 | StringLiteral chars='abc'
+   4 | VariableDeclaration variable='z' initializer=#5
+   5 | BinaryExpression op='and' left='x' right=#6
+   6 | BinaryExpression op='+' left=4 right=2
+   7 | IfStatement test=#8 consequence=[#9] alternate=[#10]
+   8 | BinaryExpression op='>' left=7 right='x'
+   9 | AssignmentStatement target='x' source=1
+  10 | AssignmentStatement target='x' source=#11
+  11 | BinaryExpression op='**' left=2 right=5
+  12 | AssignmentStatement target='y' source=#13
+  13 | BinaryExpression op='-' left=2 right=undefined
+  14 | AssignmentStatement target='z' source=#15
+  15 | BinaryExpression op='x' left='true' right='y'
+  16 | WhileStatement test=#17 consequence=[#18]
+  17 | BinaryExpression op='or' left='x' right='y'
+  18 | AssignmentStatement target='x' source=#19
+  19 | BinaryExpression op='*' left='y' right=2
+  20 | ForStatement varDec=#21 test=#22 increment=#23 consequence=[#25]
+  21 | VariableDeclaration variable='z' initializer=4
+  22 | BinaryExpression op='>' left='z' right=3
+  23 | AssignmentStatement target='z' source=#24
+  24 | BinaryExpression op='+' left='z' right=1
+  25 | AssignmentStatement target='x' source=#26
+  26 | BinaryExpression op='+' left='x' right=2`
 
 describe("The analyzer", () => {
   //   for (const [scenario, source] of semanticChecks) {

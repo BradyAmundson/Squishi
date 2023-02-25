@@ -6,11 +6,13 @@ Squishi {
                     | ForStmt
                     | Function
                     | IfStmt
+                    | WhileStmt
+                    | ForStmt
     PrintStatement 	= speak Exp ";"
     VarDeclaration	= pencil id "=" Exp ";"
     AssignStmt		= id "=" Exp ";"
-    ForStmt			= for VarDeclaration stop Exp fastfwd Exp (Statement ";")+ stop
-    WhileStmt		= while Exp Statement+ stop
+    ForStmt			= for VarDeclaration stop Exp fastfwd AssignStmt (Statement)+ stop
+    WhileStmt		= while Exp ":" Statement+ stop
     IfStmt          = if Exp ":" Statement+ stop else Statement+ stop
     ElseStmt        = else ":" Statement+ stop
     ElseIfStmt      = elseIf Exp ":" Statement+ stop

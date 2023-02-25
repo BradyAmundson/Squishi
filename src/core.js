@@ -30,6 +30,18 @@ export class IfStatement {
   }
 }
 
+export class WhileStatement {
+  constructor(test, consequence) {
+    Object.assign(this, { test, consequence })
+  }
+}
+
+export class ForStatement {
+  constructor(varDec, test, increment, consequence) {
+    Object.assign(this, { varDec, test, increment, consequence })
+  }
+}
+
 export class BinaryExpression {
   constructor(op, left, right) {
     Object.assign(this, { op, left, right })

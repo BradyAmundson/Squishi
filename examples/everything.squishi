@@ -1,3 +1,13 @@
 speak("abc");
 pencil z = x and [4+2];
 if 7>x : x=1; stop else x=2**5; stop
+y = -2;
+z = x if true otherwise y;
+
+while x or y:
+     x = y*2;
+stop
+
+for pencil z = 4; stop z > 3 fastfwd z = z + 1;
+    x = x + 2;
+stop
