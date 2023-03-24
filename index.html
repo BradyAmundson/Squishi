@@ -12,25 +12,48 @@
 		}
 
 		p{
-			color: black;
 			font-family: "Gill Sans", sans-serif;
 			font-size: 120%;
 			text-align: center;
 		}
 
-		welcome{
+		#welcome{
 			-webkit-text-stroke-width: 1px;
 			-webkit-text-stroke-color: black;
+		}
+
+		#bio{
+			background-color: #07b0b0;
+			color: white;
+			margin: 40px;
+			height: 400px;
+			border: 0.5rem outset black;
+		}
+		h3{
+			background-color: white;
+			color: #07b0b0;
+			text-align: center;
+		}
+		h2{
+			text-align: center;
+			margin: -10px;
+		}
+		#row{
+		  display: grid;
+		  height: 500px;
+		  grid-template-columns: repeat(3, 1fr);
+		  grid-template-rows: 100px;
+			
 		}
 	</style>	
 </head>
 <body>
 	<h1>Squishi</h1>
-	<welcome>
+	<div id = "welcome">
 		<p>
 			Welcome to Squishi, a coding language based off of all of our favorite emojis and motivated by efficiency and simplicity.
 		</p>
-	</welcome>
+	</div>
 	<p>Squishi is a coding language that was created with the goal of being simpler, cleaner, and more visually intuitive than other programming languages. One of the key priorities of Squishi is to use concise syntax, which means that the language is designed to be easy to read and write. Additionally, Squishi aims to make advanced programming features such as list comprehension and class merging more accessible to programmers of all levels.
 	</p>
 	</n>
@@ -41,7 +64,24 @@
 	<p>
 	For example, the 🫳 emoji may be used to represent a list or an array, while the 🎤 emoji could represent a function that has something to do with audio or sound. By using emojis in this way, Squishi aims to make programming more intuitive and less intimidating for beginners, while also making it more expressive and enjoyable for experienced programmers.
 	</p>
-
+	<h2>Squishi Authors</h2>
+	<div id = "row">
+		<div id = "bio">
+			<h3>Brady Amundson</h3>
+			<img src="">
+			<p>Brady is a slay engineer from Minnesota with an affinity for skiing</p>
+		</div>
+		<div id = "bio">
+			<h3>Makena Robison</h3>
+			<img src="">
+			<p>Makena dances and is from vegas</p>
+		</div>
+		<div id = "bio">
+			<h3>Tori Wei</h3>
+			<img src="">
+			<p>Tori is this really cool SOC president and graphic designer</p>
+		</div>
+	</div>
 
 
 
