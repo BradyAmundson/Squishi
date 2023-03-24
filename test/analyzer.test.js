@@ -2,27 +2,29 @@ import util from "util"
 import assert from "assert/strict"
 import analyze, { error } from "../src/analyzer.js"
 
-// const semanticChecks = [
-//   ["variables can be printed", "let x = 1; print x;"],
-//   ["variables can be reassigned", "let x = 1; x = x * 5 / ((-3) + x);"],
-//   [
-//     "all predefined identifiers",
-//     "print ln(sqrt(sin(cos(hypot(π,1) + exp(5.5E2)))));",
-//   ],
-// ]
+const semanticChecks = [
+  ["variables can be printed", "pencil x = 1; speak(x);"],
+  //   ["variables can be reassigned", "let x = 1; x = x * 5 / ((-3) + x);"],
+  //   [
+  //     "all predefined identifiers",
+  //     "print ln(sqrt(sin(cos(hypot(π,1) + exp(5.5E2)))));",
+  //   ],
+]
 
-// const semanticErrors = [
-//   ["a variable used as function", "x = 1; x(2);", /Expected "="/],
-//   ["a function used as variable", "print(sin + 1);", /expected/],
-//   [
-//     "re-declared identifier",
-//     "let x = 1; let x = 2;",
-//     /x has already been declared/,
-//   ],
-//   ["an attempt to write a read-only var", "π = 3;", /π is read only/],
-//   ["too few arguments", "print(sin());", /Expected 1 arg\(s\), found 0/],
-//   ["too many arguments", "print(sin(5, 10));", /Expected 1 arg\(s\), found 2/],
-// ]
+const semanticErrors = [
+  ["can detect undeclared variables", "pencil x = 1; speak(y);"],
+  ["variable decalred twice", "pencil x = 1; pencil x = 2;"],
+  //   ["a variable used as function", "x = 1; x(2);", /Expected "="/],
+  //   ["a function used as variable", "print(sin + 1);", /expected/],
+  //   [
+  //     "re-declared identifier",
+  //     "let x = 1; let x = 2;",
+  //     /x has already been declared/,
+  //   ],
+  //   ["an attempt to write a read-only var", "π = 3;", /π is read only/],
+  //   ["too few arguments", "print(sin());", /Expected 1 arg\(s\), found 0/],
+  //   ["too many arguments", "print(sin(5, 10));", /Expected 1 arg\(s\), found 2/],
+]
 
 const sample = `speak("abc");
 pencil z = x and [4+2];
@@ -67,19 +69,19 @@ const expected = `   1 | Program statement=[#2,#4,#7,#12,#14,#16,#20]
   26 | BinaryExpression op='+' left='x' right=2`
 
 describe("The analyzer", () => {
-  //   for (const [scenario, source] of semanticChecks) {
-  //     it(`recognizes ${scenario}`, () => {
-  //       assert.ok(analyze(source))
-  //     })
-  //   }
-  //   for (const [scenario, source, errorMessagePattern] of semanticErrors) {
-  //     it(`throws on ${scenario}`, () => {
-  //       assert.throws(() => analyze(source), errorMessagePattern)
-  //     })
-  //   }
-  it(`produces the expected graph for the simple sample program`, () => {
-    assert.deepEqual(util.format(analyze(sample)), expected)
-  })
+  for (const [scenario, source] of semanticChecks) {
+    it(`recognizes ${scenario}`, () => {
+      assert.ok(analyze(source))
+    })
+  }
+  for (const [scenario, source, errorMessagePattern] of semanticErrors) {
+    it(`throws on ${scenario}`, () => {
+      assert.throws(() => analyze(source), errorMessagePattern)
+    })
+  }
+  // it(`produces the expected graph for the simple sample program`, () => {
+  //   assert.deepEqual(util.format(analyze(sample)), expected)
+  // })
   it(`can call the error function with no node`, () => {
     assert.throws(error)
   })

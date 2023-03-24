@@ -12,7 +12,48 @@ export function error(message, node) {
   throw new Error(message)
 }
 
+function must(condition, message, errorLocation) {
+  if (!condition) core.error(message, errorLocation)
+}
+
+function mustNotAlreadyBeDeclared(context, name) {
+  must(!context.sees(name), `Identifier ${name} already declared`)
+}
+
+function mustHaveBeenFound(entity, name) {
+  must(entity, `Identifier ${name} not declared`)
+}
+
+class Context {
+  constructor({
+    parent = null,
+    locals = new Map(),
+    inLoop = false,
+    function: f = null,
+  }) {
+    Object.assign(this, { parent, locals, inLoop, function: f })
+  }
+  sees(name) {
+    // Search "outward" through enclosing scopes
+    return this.locals.has(name) || this.parent?.sees(name)
+  }
+  add(name, entity) {
+    mustNotAlreadyBeDeclared(this, name)
+    this.locals.set(name, entity)
+  }
+  lookup(name) {
+    const entity = this.locals.get(name) || this.parent?.lookup(name)
+    mustHaveBeenFound(entity, name)
+    return entity
+  }
+  newChildContext(props) {
+    return new Context({ ...this, ...props, parent: this, locals: new Map() })
+  }
+}
+
 export default function analyze(sourceCode) {
+  let context = new Context({})
+
   const analyzer = squishiGrammar.createSemantics().addOperation("rep", {
     Program(statements) {
       return new core.Program(statements.rep())
@@ -20,8 +61,10 @@ export default function analyze(sourceCode) {
     PrintStatement(_speak, argument, _semicolon) {
       return new core.PrintStatement(argument.rep())
     },
-    VarDeclaration(_pencil, variable, _equal, initializer, _semicolon) {
-      return new core.VariableDeclaration(variable.rep(), initializer.rep())
+    VarDeclaration(_pencil, id, _equal, initializer, _semicolon) {
+      const variable = new core.Variable(id.rep(), core.Type.INT) // fix this later
+      context.add(id.rep(), variable)
+      return new core.VariableDeclaration(variable, initializer.rep())
     },
     AssignStmt(target, _equals, source, _semicolon) {
       return new core.AssignmentStatement(target.rep(), source.rep())
@@ -32,7 +75,16 @@ export default function analyze(sourceCode) {
     WhileStmt(_while, test, _colon, consequent, _stop) {
       return new core.WhileStatement(test.rep(), consequent.rep())
     },
-    ForStmt(_for, varDec, _stop, test, _fastfwd, increment, consequent, _stop2) {
+    ForStmt(
+      _for,
+      varDec,
+      _stop,
+      test,
+      _fastfwd,
+      increment,
+      consequent,
+      _stop2
+    ) {
       return new core.ForStatement(
         varDec.rep(),
         test.rep(),
@@ -44,7 +96,9 @@ export default function analyze(sourceCode) {
       return chars.sourceString
     },
     Var(id) {
-      return id.rep()
+      const entity = context.lookup(id.rep())
+      // mustHaveBeenFound(entity, id.rep())
+      return entity
     },
     Exp_unary(op, right) {
       return new core.BinaryExpression(op.rep(), right.rep())
@@ -95,6 +149,6 @@ export default function analyze(sourceCode) {
   })
 
   const match = squishiGrammar.match(sourceCode)
-    // if (!match.succeeded()) error(match.message)
+  if (!match.succeeded()) error(match.message)
   return analyzer(match).rep()
 }
