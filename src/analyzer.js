@@ -62,11 +62,14 @@ export default function analyze(sourceCode) {
       return new core.PrintStatement(argument.rep())
     },
     VarDeclaration(_pencil, id, _equal, initializer, _semicolon) {
-      const variable = new core.Variable(id.rep(), core.Type.INT) // fix this later
+      console.log(initializer.rep().type)
+      console.log(core.Type.INT)
+      const variable = new core.Variable(id.rep(), initializer.rep().type) // fix this later
       context.add(id.rep(), variable)
       return new core.VariableDeclaration(variable, initializer.rep())
     },
     AssignStmt(target, _equals, source, _semicolon) {
+      context.lookup(target.rep())
       return new core.AssignmentStatement(target.rep(), source.rep())
     },
     IfStmt(_if, test, _colon, consequent, _stop, _else, alternate, _stop2) {

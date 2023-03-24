@@ -51,11 +51,13 @@ export class BinaryExpression {
 export class StringLiteral {
   constructor(chars) {
     this.chars = chars
+    this.type = Type.STRING
   }
 }
 
 export class Variable {
   constructor(name, type) {
+    console.log(type)
     this.name = name
     this.type = type
   }
@@ -117,3 +119,9 @@ export function error(message, node) {
   }
   throw new Error(message)
 }
+
+
+// String.prototype.type = Type.STRING
+Number.prototype.type = Type.INT
+// BigInt.prototype.type = Type.INT
+Boolean.prototype.type = Type.BOOLEAN
