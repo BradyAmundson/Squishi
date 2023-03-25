@@ -1,0 +1,26 @@
+f multiply x, y:
+    pencil z = x * y;
+    return z;
+stop
+
+f shortReturn:
+    return;
+stop
+
+pencil globalZ = "hello";
+f globalFunction:
+  speak(globalZ);
+stop
+
+f nestedIfReturn: 
+  if true: return; 
+  else return; 
+  stop
+stop
+
+while false: 
+  if true: break; 
+  else break; 
+  stop
+stop
+
