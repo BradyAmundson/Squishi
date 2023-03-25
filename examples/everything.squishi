@@ -1,4 +1,5 @@
 speak("abc");
+pencil x = 7;
 pencil z = x and [4+2];
 if 7>x : x=1; stop else x=2**5; stop
 y = -2;

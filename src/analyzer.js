@@ -103,6 +103,34 @@ export default function analyze(sourceCode) {
         consequent.rep()
       )
     },
+    Function(_f, id, params, _colon, body, _stop){
+      const paramReps = params.asIteration().rep()
+      const func = new core.Function(id.rep())
+      context.add(id.rep(), func)
+      context = context.newChildContext({ inLoop: false, function: func })
+      for(const p of paramReps) context.add(p.name, p)
+      // console.log(context)
+      const b = body.rep()
+      context = context.parent
+      // console.log(context)
+      return new core.FunctionDeclaration(id.rep(), paramReps, b)
+    },
+    Param(id){
+      return new core.Variable(id.rep(), core.Type.ANY)
+    },
+    Statement_return(_return, expression, _semicolon) {
+      // mustBeInAFunction(context, returnKeyword)
+      // mustReturnSomething(context.function)
+      const e = expression.rep()
+      // mustBeReturnable({ expression: e, from: context.function })
+      return new core.ReturnStatement(e)
+    },
+
+    Statement_shortreturn(_return, _semicolon) {
+      // mustBeInAFunction(context)
+      // mustNotReturnAnything(context.function)
+      return new core.ShortReturnStatement()
+    },
     id(chars) {
       return chars.sourceString
     },

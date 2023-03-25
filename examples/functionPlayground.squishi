@@ -1,0 +1,8 @@
+f multiply x, y:
+    pencil z = x * y;
+    return z;
+stop
+
+//f yolo x,y:
+//    return x * y;
+//stop

@@ -5,6 +5,8 @@ Squishi {
                     | AssignStmt
                     | ForStmt
                     | Function
+                    | return Exp ";"                                 --return
+                    | return ";"                                    --shortreturn
                     | IfStmt
                     | WhileStmt
                     | ForStmt
@@ -16,8 +18,10 @@ Squishi {
     IfStmt          = if Exp ":" Statement+ stop else Statement+ stop
     ElseStmt        = else ":" Statement+ stop
     ElseIfStmt      = elseIf Exp ":" Statement+ stop
+    Function        = f id ListOf<Param, ","> ":" Statement+ stop
+    Param           = id
     id				= ~keyword idchar+
-    idchar			= letter | "!" | ","
+    idchar			= alnum
     keyword			= speak | pencil | for | step | stop | fastfwd | while | true | false | else | if | elseIf
     Var				= id
 
@@ -50,7 +54,7 @@ Squishi {
                     | Var
      	            | BooleanVal
                     | Array
-    Function        = id "(" ListOf<id, ","> ")" Statement+
+
     MethodCall      = Term "." id ("(" ListOf<Exp, ","> ")")?
     pencil			= "pencil" ~idchar
     speak			= "speak" ~idchar
@@ -65,6 +69,8 @@ Squishi {
     if              = "if" ~idchar
     else            = "else" ~idchar
     elseIf          = "elseIf" ~idchar
+    f               = "f" ~idchar
+    return          = "return" ~idchar
     numeral 		= digit+ ("." digit+)?
     stringliteral 	= "\"" (~"\""any)* "\""
     space      	   += "//" (~"\n" any)*				--comment

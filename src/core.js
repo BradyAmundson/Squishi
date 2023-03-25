@@ -42,6 +42,30 @@ export class ForStatement {
   }
 }
 
+export class FunctionDeclaration {
+  constructor(name, params, body) {
+    Object.assign(this, { name, params, body })
+  }
+}
+
+export class Function {
+  // Generated when processing a function declaration
+  constructor(name) {
+    Object.assign(this, { name })
+  }
+}
+
+export class ReturnStatement {
+  // Example: return c[5]
+  constructor(expression) {
+    this.expression = expression
+  }
+}
+
+export class ShortReturnStatement {
+  // Intentionally empty
+}
+
 export class BinaryExpression {
   constructor(op, left, right) {
     Object.assign(this, { op, left, right })
