@@ -1,0 +1,41 @@
+pencil x = 1;
+pencil y = true;
+pencil z = 0;
+
+while y:
+    x = x + 1;
+    if x == 3:
+      break;
+    else
+      y = false;
+    stop
+stop
+
+pencil a = true;
+while a:
+    break;
+stop
+
+while false:
+  if true:
+    break;
+  else
+    break;
+  stop
+stop
+
+
+//if x:
+if y:
+    speak("hi");
+stop
+
+10.loop item:
+    speak(item);
+stop
+
+"what up".loop item:
+    speak(item);
+stop
+
+//speak(item);

@@ -30,6 +30,12 @@ export class IfStatement {
   }
 }
 
+export class IfStatementShort {
+  constructor(test, consequence) {
+    Object.assign(this, { test, consequence })
+  }
+}
+
 export class WhileStatement {
   constructor(test, consequence) {
     Object.assign(this, { test, consequence })
@@ -39,6 +45,13 @@ export class WhileStatement {
 export class ForStatement {
   constructor(varDec, test, increment, consequence) {
     Object.assign(this, { varDec, test, increment, consequence })
+  }
+}
+
+export class LoopStatement {
+  // Example: for ball in balls { ball.bounce();  }
+  constructor(iterator, collection, body) {
+    Object.assign(this, { iterator, collection, body })
   }
 }
 
@@ -53,6 +66,10 @@ export class Function {
   constructor(name) {
     Object.assign(this, { name })
   }
+}
+
+export class BreakStatement {
+  // Intentionally empty
 }
 
 export class ReturnStatement {
@@ -143,7 +160,6 @@ export function error(message, node) {
   }
   throw new Error(message)
 }
-
 
 // String.prototype.type = Type.STRING
 Number.prototype.type = Type.INT

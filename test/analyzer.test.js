@@ -4,6 +4,11 @@ import analyze, { error } from "../src/analyzer.js"
 
 const semanticChecks = [
   ["variables can be printed", "pencil x = 1; speak(x);"],
+  ["short return", "f shortReturn: return;"],
+  ["long return", "f longReturn: pencil x = 5; return x; }"],
+  ["return in nested if", "f nestedIfReturn: if true: return; stop else return; stop"],
+  ["break in nested if", "while false: if true: break; stop else break; stop stop"],
+  ["long if", "if true: speak(1); stop else speak(3); stop"],
   //   ["variables can be reassigned", "let x = 1; x = x * 5 / ((-3) + x);"],
   //   [
   //     "all predefined identifiers",
@@ -14,6 +19,13 @@ const semanticChecks = [
 const semanticErrors = [
   ["can detect undeclared variables", "pencil x = 1; speak(y);"],
   ["variable decalred twice", "pencil x = 1; pencil x = 2;"],
+  ["break outside loop", "break;", /Break can only appear in a loop/],
+  [
+    "break inside function",
+    "while true: f breakFunction: break; stop",
+    /Break can only appear in a loop/,
+  ],
+  ["if statement no boolean", 'if y: speak("hi"); stop', /Expected a boolean/],
   //   ["a variable used as function", "x = 1; x(2);", /Expected "="/],
   //   ["a function used as variable", "print(sin + 1);", /expected/],
   //   [

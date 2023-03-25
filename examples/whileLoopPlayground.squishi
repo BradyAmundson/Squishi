@@ -26,3 +26,10 @@ stop
 //     x = x - 1;
 //     p = p + 7+10;
 // stop
+
+
+pencil x = 1;
+pencil y = true
+pencil z = 0
+
+if 7>x : x=1; stop else x=2**5; stop

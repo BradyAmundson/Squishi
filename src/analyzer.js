@@ -32,6 +32,10 @@ function mustBeTheSameType(entity1, entity2) {
   must(entity1.type === entity2.type, "Operands do not have the same type") //add equivalent method
 }
 
+function mustBeInLoop(context, at) {
+  must(context.inLoop, "Break can only appear in a loop", at)
+}
+
 class Context {
   constructor({
     parent = null,
@@ -78,13 +82,20 @@ export default function analyze(sourceCode) {
       context.lookup(target.rep())
       return new core.AssignmentStatement(target.rep(), source.rep())
     },
-    IfStmt(_if, test, _colon, consequent, _stop, _else, alternate, _stop2) {
+    IfStmt_short(_if, test, _colon, consequent, _stop) {
+      mustHaveBooleanType(test.rep())
+      return new core.IfStatementShort(test.rep(), consequent.rep())
+    },
+    IfStmt_long(_if, test, _colon, consequent, _else, alternate, _stop2) {
       mustHaveBooleanType(test.rep())
       return new core.IfStatement(test.rep(), consequent.rep(), alternate.rep())
     },
-    WhileStmt(_while, test, _colon, consequent, _stop) {
+    WhileStmt(_while, test, _colon, body, _stop) {
       mustHaveBooleanType(test.rep())
-      return new core.WhileStatement(test.rep(), consequent.rep())
+      context = context.newChildContext({ inLoop: true })
+      const b = body.rep()
+      context = context.parent
+      return new core.WhileStatement(test.rep(), b)
     },
     ForStmt(
       _for,
@@ -103,20 +114,44 @@ export default function analyze(sourceCode) {
         consequent.rep()
       )
     },
-    Function(_f, id, params, _colon, body, _stop){
+    LoopStmt(iterable, _loop, id, _colon, body, _stop) {
+      let iterableObj
+      if (iterable.rep().type === core.Type.INT) {
+        iterableObj = new core.Variable(id.rep(), iterable.rep().type)
+      } else if (iterable.rep().type === core.Type.STRING) {
+        iterableObj = new core.Variable(id.rep(), iterable.rep().type)
+      } else if (iterable.rep().type === core.Type.ARRAY) {
+        iteratableObj = new core.Variable(
+          id.rep(),
+          iterable.rep().type.baseType
+        )
+      } else {
+        error("Not a string, number, or array")// TODO: write actual error
+      }
+      context = context.newChildContext({ inLoop: true })
+      context.add(id.rep(), iterableObj)
+      const b = body.rep()
+      context = context.parent
+      return new core.LoopStatement(iterableObj, iterable.rep(), b)
+    },
+    Function(_f, id, params, _colon, body, _stop) {
       const paramReps = params.asIteration().rep()
       const func = new core.Function(id.rep())
       context.add(id.rep(), func)
       context = context.newChildContext({ inLoop: false, function: func })
-      for(const p of paramReps) context.add(p.name, p)
+      for (const p of paramReps) context.add(p.name, p)
       // console.log(context)
       const b = body.rep()
       context = context.parent
       // console.log(context)
       return new core.FunctionDeclaration(id.rep(), paramReps, b)
     },
-    Param(id){
+    Param(id) {
       return new core.Variable(id.rep(), core.Type.ANY)
+    },
+    Statement_break(_break, _semicolon) {
+      mustBeInLoop(context)
+      return new core.BreakStatement()
     },
     Statement_return(_return, expression, _semicolon) {
       // mustBeInAFunction(context, returnKeyword)
@@ -180,13 +215,13 @@ export default function analyze(sourceCode) {
     stringliteral(_open, chars, _close) {
       return new core.StringLiteral(chars.sourceString)
     },
-    BooleanVal(bool){
+    BooleanVal(bool) {
       return bool.rep()
     },
-    true(_){
+    true(_) {
       return true
     },
-    false(_){
+    false(_) {
       return false
     },
     _terminal() {
