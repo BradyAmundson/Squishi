@@ -45,6 +45,7 @@ export class ForStatement {
 export class BinaryExpression {
   constructor(op, left, right) {
     Object.assign(this, { op, left, right })
+    this.type = Type.BOOLEAN
   }
 }
 
@@ -57,7 +58,6 @@ export class StringLiteral {
 
 export class Variable {
   constructor(name, type) {
-    console.log(type)
     this.name = name
     this.type = type
   }

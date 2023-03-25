@@ -24,6 +24,14 @@ function mustHaveBeenFound(entity, name) {
   must(entity, `Identifier ${name} not declared`)
 }
 
+function mustHaveBooleanType(entity) {
+  must(entity.type === core.Type.BOOLEAN, "Expected a boolean")
+}
+
+function mustBeTheSameType(entity1, entity2) {
+  must(entity1.type === entity2.type, "Operands do not have the same type") //add equivalent method
+}
+
 class Context {
   constructor({
     parent = null,
@@ -62,8 +70,6 @@ export default function analyze(sourceCode) {
       return new core.PrintStatement(argument.rep())
     },
     VarDeclaration(_pencil, id, _equal, initializer, _semicolon) {
-      console.log(initializer.rep().type)
-      console.log(core.Type.INT)
       const variable = new core.Variable(id.rep(), initializer.rep().type) // fix this later
       context.add(id.rep(), variable)
       return new core.VariableDeclaration(variable, initializer.rep())
@@ -73,9 +79,11 @@ export default function analyze(sourceCode) {
       return new core.AssignmentStatement(target.rep(), source.rep())
     },
     IfStmt(_if, test, _colon, consequent, _stop, _else, alternate, _stop2) {
+      mustHaveBooleanType(test.rep())
       return new core.IfStatement(test.rep(), consequent.rep(), alternate.rep())
     },
     WhileStmt(_while, test, _colon, consequent, _stop) {
+      mustHaveBooleanType(test.rep())
       return new core.WhileStatement(test.rep(), consequent.rep())
     },
     ForStmt(
@@ -120,6 +128,7 @@ export default function analyze(sourceCode) {
       return new core.BinaryExpression("and", left.rep(), right.rep())
     },
     Exp4_op(left, op, right) {
+      mustBeTheSameType(left.rep(), right.rep())
       return new core.BinaryExpression(op.rep(), left.rep(), right.rep())
     },
     Exp5_plusminus(left, op, right) {
@@ -142,6 +151,15 @@ export default function analyze(sourceCode) {
     },
     stringliteral(_open, chars, _close) {
       return new core.StringLiteral(chars.sourceString)
+    },
+    BooleanVal(bool){
+      return bool.rep()
+    },
+    true(_){
+      return true
+    },
+    false(_){
+      return false
     },
     _terminal() {
       return this.sourceString
