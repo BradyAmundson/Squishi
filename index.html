@@ -5,8 +5,18 @@
 	  }
   
 	  img {
-		display: block;
-		margin: 0 auto;
+	      display: block;
+	      margin: 0 auto;
+	      border: 5px solid #ffd700;
+	      /* Gold */
+	      border-radius: 15px;
+	      box-shadow: 0 0 10px #ffd700;
+	      /* Gold */
+	      transition: transform 0.2s ease-in-out;
+	  }
+
+	  img:hover {
+	      transform: scale(1.1);
 	  }
   
 	  h1 {
@@ -60,8 +70,8 @@
   
   <body>
 	<a href="https://github.com/BradyAmundson/Squishi">
-	  <img src="./assets/squishi_logo.jpeg" alt="Squishi Logo">
-	</a>a
+	  <img src="./assets/squishi_logo.jpeg" alt="Squishi Logo" width="400" height="400">
+	</a>
 	<h1>Squishi</h1>
 	<div id="welcome">
 	  <p>
