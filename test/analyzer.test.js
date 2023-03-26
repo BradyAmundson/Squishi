@@ -4,6 +4,7 @@ import analyze, { error } from "../src/analyzer.js"
 
 const semanticChecks = [
   ["variables can be printed", "pencil x = 1; speak(x);"],
+  ["variable reassignment", "pencil x = 3; x = 2;"],
   ["short return", "f shortReturn: return; stop"],
   ["long return", "f multiply x, y: pencil z = x * y; return z; stop"],
   [
@@ -16,6 +17,21 @@ const semanticChecks = [
     "global variables",
     'pencil globalZ = "hello"; f globalFunction: speak(globalZ); stop',
   ],
+  ["integer loop", "10.loop item: speak(item); stop"],
+  ["string loop", '"what up".loop item: speak(item); stop'],
+  ["outer variable", "pencil x=1; while false: speak(x); stop"],
+  [
+    "for statement",
+    "pencil j = 1; for pencil k = 4; stop k > 3 fastfwd k = k + 1; j = j + 2; stop",
+  ],
+  ["unary not", "speak(!false);"],
+  [
+    "ternary expression",
+    "pencil x = 0; pencil y = 1; pencil z = 2; z = x if true otherwise y;",
+  ],
+  ["while", "pencil x = 2; while x > 0 or x < 20: x = x ** 2; stop"],
+  ["and", "speak(true and false);"],
+
   //   ["variables can be reassigned", "let x = 1; x = x * 5 / ((-3) + x);"],
   //   [
   //     "all predefined identifiers",
@@ -45,6 +61,17 @@ const semanticErrors = [
     'pencil y = 5; if y: speak("hi"); stop',
     /Expected a boolean/,
   ],
+  [
+    "mismatched types",
+    "speak(5 > true);",
+    /Operands do not have the same type/,
+  ],
+  [
+    "return outside function",
+    "return;",
+    /Return can only appear in a function/,
+  ],
+
   //   ["a variable used as function", "x = 1; x(2);", /Expected "="/],
   //   ["a function used as variable", "print(sin + 1);", /expected/],
   //   [

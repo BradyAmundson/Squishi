@@ -24,3 +24,7 @@ while false:
   stop
 stop
 
+pencil j = 1;
+for pencil k = 4; stop k > 3 fastfwd k = k + 1;
+    j = j + 2;
+stop
