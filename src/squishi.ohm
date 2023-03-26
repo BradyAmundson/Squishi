@@ -5,6 +5,7 @@ Squishi {
                     | AssignStmt
                     | ForStmt
                     | Function
+                    | Exp9_call ";"                                 --call
                     | break ";"                                     --break
                     | return Exp ";"                                 --return
                     | return ";"                                    --shortreturn
@@ -24,6 +25,8 @@ Squishi {
     ElseIfStmt      = elseIf Exp ":" Statement+ stop
     Function        = f id ListOf<Param, ","> ":" Statement+ stop
     Param           = id
+    Call            = id ":" Arguments
+    Arguments       = ListOf<Exp, ",">
     id				= ~keyword idchar+
     idchar			= alnum
     keyword			= speak | pencil | for | step | stop | fastfwd | while | true | false | else | if | elseIf | loop
@@ -49,6 +52,7 @@ Squishi {
                     | Exp9
     Exp9            = "(" Exp ")"      --parens
     				| Term
+                    | Call              --call
                     | MethodCall
 
 

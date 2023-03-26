@@ -63,8 +63,14 @@ export class FunctionDeclaration {
 
 export class Function {
   // Generated when processing a function declaration
-  constructor(name) {
-    Object.assign(this, { name })
+  constructor(name, params) {
+    Object.assign(this, { name, params })
+  }
+}
+
+export class Call {
+  constructor(name, args) {
+    Object.assign(this, { name, args })
   }
 }
 
@@ -84,8 +90,8 @@ export class ShortReturnStatement {
 }
 
 export class BinaryExpression {
-  constructor(op, left, right) {
-    Object.assign(this, { op, left, right })
+  constructor(op, left, right, type) {
+    Object.assign(this, { op, left, right, type })
     this.type = Type.BOOLEAN
   }
 }

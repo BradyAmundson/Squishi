@@ -2,7 +2,15 @@ f multiply x, y:
     pencil z = x * y;
     return z;
 stop
-speak(x);
+//speak(x);
+
+pencil p = 11;
+pencil q = 2;
+multiply: p, q;
+multiply: 11,2;
+//multiply:11;
+//multiply:11, 3, 4;
+//yolo:;
 
 //f yolo x,y:
 //    return x * y;

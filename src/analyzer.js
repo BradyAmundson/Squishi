@@ -4,6 +4,11 @@ import * as core from "./core.js"
 
 const squishiGrammar = ohm.grammar(fs.readFileSync("src/squishi.ohm"))
 
+const INT = core.Type.INT
+const FLOAT = core.Type.FLOAT
+const STRING = core.Type.STRING
+const BOOLEAN = core.Type.BOOLEAN
+
 // Throw an error message that takes advantage of Ohm's messaging
 export function error(message, node) {
   if (node) {
@@ -24,6 +29,14 @@ function mustHaveBeenFound(entity, name) {
   must(entity, `Identifier ${name} not declared`)
 }
 
+function mustHaveNumericType(e, at) {
+  must([INT, FLOAT].includes(e.type), "Expected a number", at)
+}
+
+function mustHaveNumericOrStringType(e, at) {
+  must([INT, FLOAT, STRING].includes(e.type), "Expected a number or string", at)
+}
+
 function mustHaveBooleanType(entity) {
   must(entity.type === core.Type.BOOLEAN, "Expected a boolean")
 }
@@ -34,6 +47,24 @@ function mustBeTheSameType(entity1, entity2) {
 
 function mustBeInLoop(context, at) {
   must(context.inLoop, "Break can only appear in a loop", at)
+}
+
+function mustBeIterable(e, at) {
+  must(
+    [INT, FLOAT, STRING].includes(e.type),
+    `Cannot loop through type ${e.type}`,
+    at
+  )
+}
+
+function argumentsMustMatch(args, target, at) {
+  const targetParams = target.params
+  must(
+    targetParams.length === args.length,
+    `${targetParams.length} argument(s) required but ${args.length} passed`,
+    at
+  )
+  // targetTypes.forEach((type, i) => mustBeAssignable(args[i], { toType: type }))
 }
 
 class Context {
@@ -115,18 +146,14 @@ export default function analyze(sourceCode) {
       )
     },
     LoopStmt(iterable, _loop, id, _colon, body, _stop) {
+      mustBeIterable(iterable.rep())
       let iterableObj
       if (iterable.rep().type === core.Type.INT) {
         iterableObj = new core.Variable(id.rep(), iterable.rep().type)
       } else if (iterable.rep().type === core.Type.STRING) {
         iterableObj = new core.Variable(id.rep(), iterable.rep().type)
       } else if (iterable.rep().type === core.Type.ARRAY) {
-        iteratableObj = new core.Variable(
-          id.rep(),
-          iterable.rep().type.baseType
-        )
-      } else {
-        error("Not a string, number, or array")// TODO: write actual error
+        iterableObj = new core.Variable(id.rep(), iterable.rep().type.baseType)
       }
       context = context.newChildContext({ inLoop: true })
       context.add(id.rep(), iterableObj)
@@ -136,7 +163,7 @@ export default function analyze(sourceCode) {
     },
     Function(_f, id, params, _colon, body, _stop) {
       const paramReps = params.asIteration().rep()
-      const func = new core.Function(id.rep())
+      const func = new core.Function(id.rep(), paramReps)
       context.add(id.rep(), func)
       context = context.newChildContext({ inLoop: false, function: func })
       for (const p of paramReps) context.add(p.name, p)
@@ -148,6 +175,19 @@ export default function analyze(sourceCode) {
     },
     Param(id) {
       return new core.Variable(id.rep(), core.Type.ANY)
+    },
+    Statement_call(call, _semicolon) {
+      return call.rep()
+    },
+    Call(id, _colon, args) {
+      // context.lookup(id.rep())
+      // console.log(context.locals.get(id.rep()).params)
+      const argumentReps = args.rep()
+      argumentsMustMatch(argumentReps, context.locals.get(id.rep()))
+      return new core.Call(id.rep(), argumentReps)
+    },
+    Arguments(args) {
+      return args.asIteration().rep()
     },
     Statement_break(_break, _semicolon) {
       mustBeInLoop(context)
@@ -175,33 +215,72 @@ export default function analyze(sourceCode) {
       return entity
     },
     Exp_unary(op, right) {
-      return new core.BinaryExpression(op.rep(), right.rep())
+      let type
+      if (op.sourceString === "!") {
+        mustHaveBooleanType(right.rep())
+        type = BOOLEAN
+      }
+      if (op === "-") mustHaveNumericType(right.rep()), (type = x.type)
+      return new core.BinaryExpression(op.rep(), right.rep(), type)
     },
     Exp1_ternary(consequent, _if, test, _otherwise, alternate) {
       return new core.BinaryExpression(
         consequent.rep(),
         test.rep(),
-        alternate.rep()
+        alternate.rep(),
+        BOOLEAN
       )
     },
     Exp2_or(left, _or, right) {
-      return new core.BinaryExpression("or", left.rep(), right.rep())
+      let [x, y] = [left.rep(), right.rep()]
+      mustHaveBooleanType(x)
+      mustHaveBooleanType(y)
+      x = new core.BinaryExpression("or", x, y, BOOLEAN)
+      return x
+      // return new core.BinaryExpression("or", left.rep(), right.rep())
     },
     Exp3_and(left, _and, right) {
-      return new core.BinaryExpression("and", left.rep(), right.rep())
+      let [x, y] = [left.rep(), right.rep()]
+      mustHaveBooleanType(x)
+      mustHaveBooleanType(y)
+      x = new core.BinaryExpression("and", x, y, BOOLEAN)
+      return x
+      // return new core.BinaryExpression("and", left.rep(), right.rep())
     },
     Exp4_op(left, op, right) {
       mustBeTheSameType(left.rep(), right.rep())
-      return new core.BinaryExpression(op.rep(), left.rep(), right.rep())
+      return new core.BinaryExpression(
+        op.rep(),
+        left.rep(),
+        right.rep(),
+        BOOLEAN
+      )
     },
     Exp5_plusminus(left, op, right) {
-      return new core.BinaryExpression(op.rep(), left.rep(), right.rep())
+      const [x, o, y] = [left.rep(), op.sourceString, right.rep()]
+      if (o === "+") {
+        mustHaveNumericOrStringType(x)
+      } else {
+        mustHaveNumericType(x)
+      }
+      mustBeTheSameType(x, y)
+      return new core.BinaryExpression(o, x, y, x.type)
+      // return new core.BinaryExpression(op.rep(), left.rep(), right.rep())
     },
     Exp6_multdivmod(left, op, right) {
-      return new core.BinaryExpression(op.rep(), left.rep(), right.rep())
+      const [x, o, y] = [left.rep(), op.sourceString, right.rep()]
+      // mustHaveNumericType(x)
+      left.parent?.right.parent?.mustBeTheSameType(x, y)
+      // mustBeTheSameType(x, y)
+      return new core.BinaryExpression(o, x, y, x.type)
+      // return new core.BinaryExpression(op.rep(), left.rep(), right.rep())
     },
     Exp7_exponent(left, op, right) {
-      return new core.BinaryExpression(op.rep(), left.rep(), right.rep())
+      const [x, o, y] = [left.rep(), op.sourceString, right.rep()]
+      mustHaveNumericType(x)
+      mustBeTheSameType(x, y)
+      return new core.BinaryExpression(o, x, y, x.type)
+      // return new core.BinaryExpression(op.rep(), left.rep(), right.rep())
     },
     Exp8_brackets(_open, expression, _close) {
       return expression.rep()

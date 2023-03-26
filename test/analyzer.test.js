@@ -31,6 +31,8 @@ const semanticChecks = [
   ],
   ["while", "pencil x = 2; while x > 0 or x < 20: x = x ** 2; stop"],
   ["and", "speak(true and false);"],
+  ["short if", "pencil x = 2; if x == 2: x = 3; stop"],
+  ["array", 'pencil x = ["hello"];'],
 
   //   ["variables can be reassigned", "let x = 1; x = x * 5 / ((-3) + x);"],
   //   [
@@ -67,10 +69,25 @@ const semanticErrors = [
     /Operands do not have the same type/,
   ],
   [
-    "return outside function",
-    "return;",
-    /Return can only appear in a function/,
+    "bad types for +",
+    "pencil x = false; speak(x + 1);",
+    /Expected a number or string/,
   ],
+  ["bad types for not", 'speak(!"hello");', /Expected a boolean/],
+  ["bad types for -", "speak(false - 1);", /Expected a number/],
+  ["bad types for <", "speak(false<1);", /Operands do not have the same type/],
+  [
+    "Too many args",
+    "f multiply x, y: pencil z = x * y; return z; stop\npencil p = 11; pencil q = 2; pencil r = 3; multiply: p, q, r;",
+    /2 argument\(s\) required but 3 passed/,
+  ],
+
+  //f breakFunction: break; stop stop
+  // [
+  //   "return outside function",
+  //   "return;",
+  //   /Return can only appear in a function/,
+  // ],
 
   //   ["a variable used as function", "x = 1; x(2);", /Expected "="/],
   //   ["a function used as variable", "print(sin + 1);", /expected/],
