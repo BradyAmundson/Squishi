@@ -2,7 +2,7 @@ import util from "util"
 
 export class Program {
   constructor(statements) {
-    this.statement = statements
+    this.statements = statements
   }
 }
 

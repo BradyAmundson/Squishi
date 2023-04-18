@@ -1,2 +1,2 @@
-pencil x = 1; 
-pencil x = 2;
+pencil x = 1;
+speak(x);
