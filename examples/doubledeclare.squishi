@@ -1,2 +1,34 @@
 pencil x = 1;
 speak(x);
+speak("test");
+x = 5;
+
+if true:
+    speak(x*5);
+    return "yup";
+else
+    speak(x*6);
+    return "nope";
+stop
+
+if true:
+    speak("heyo");
+stop
+
+if true:
+    speak(x*5);
+    return "yup";
+else if false:
+    speak(x*6);
+    return "nope";
+stop
+
+if true:
+    speak(x*5);
+    return "yup";
+else if false:
+    speak(x*6);
+    return "nope";
+else
+    speak("maybe");
+stop

@@ -92,7 +92,7 @@ export class ShortReturnStatement {
 export class BinaryExpression {
   constructor(op, left, right, type) {
     Object.assign(this, { op, left, right, type })
-    this.type = Type.BOOLEAN
+    // this.type = Type.BOOLEAN
   }
 }
 
@@ -162,7 +162,7 @@ Program.prototype[util.inspect.custom] = function () {
 // Throw an error message that takes advantage of Ohm's messaging
 export function error(message, node) {
   if (node) {
-    throw new Error(`${node.source.getLineAndColumnMessage()}${message}`)
+    throw new Error(`${node.at.source.getLineAndColumnMessage()}${message}`)
   }
   throw new Error(message)
 }

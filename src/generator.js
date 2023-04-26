@@ -1,3 +1,5 @@
+import { IfStatementShort, IfStatement } from "./core.js"
+
 export default function generate(program) {
   const output = []
 
@@ -12,13 +14,13 @@ export default function generate(program) {
 
   function gen(node) {
     // console.log(node)
+    // console.log(node.constructor.name)
     return generators[node.constructor.name](node)
   }
 
   const generators = {
     Program(p) {
       p.statements.forEach((statement) => gen(statement))
-      // gen(p.statements)
     },
     PrintStatement(s) {
       const argument = gen(s.argument)
@@ -28,29 +30,33 @@ export default function generate(program) {
       // console.log(`variable: ${d.variable}`)
       output.push(`let ${gen(d.variable)} = ${d.initializer};`)
     },
-    AssignStmt(s) {
-      output.push(`${gen(s.target)} = ${gen(s.source)};`)
+    AssignmentStatement(s) {
+      output.push(`${gen(s.target)} = ${s.source};`)
     },
-    IfStmt_short(s) {
+    IfStatementShort(s) {
       output.push(`if (${gen(s.test)}) {`)
-      gen(s.consequent)
+      s.consequence.forEach((consequent) => gen(consequent))
+      // gen(s.consequent)
       output.push("}")
     },
-    IfStmt_long(s) {
+    IfStatement(s) {
       output.push(`if (${gen(s.test)}) {`)
-      gen(s.consequent)
-      if (s.alternate instanceof IfStmt_long) {
+      s.consequence.forEach((consequent) => gen(consequent))
+      if (
+        s.alternate instanceof IfStatementShort ||
+        s.alternate instanceof IfStatement
+      ) {
         output.push("} else")
         gen(s.alternate)
       } else {
         output.push("} else {")
-        gen(s.alternate)
+        s.alternate.forEach((statement) => gen(statement))
         output.push("}")
       }
     },
-    WhileStmt(s) {
+    WhileStatement(s) {
       output.push(`while (${gen(s.test)}) {`)
-      gen(s.consequent)
+      s.consequence.forEach((consequent) => gen(consequent))
       output.push("}")
     },
     ForStmt(s) {
@@ -58,9 +64,9 @@ export default function generate(program) {
       gen(s.consequent)
       output.push("}")
     },
-    LoopStmt(l) {
-      output.push(`for (const ${l.iterable} of ${l.collection}) {`)
-      gen(l.body)
+    LoopStatement(l) {
+      output.push(`for (const ${gen(l.iterator)} of ${l.collection}) {`)
+      l.body.forEach((bodyItem) => gen(bodyItem))
       output.push("}")
     },
     Function(f) {
@@ -76,10 +82,10 @@ export default function generate(program) {
     Arguments(args) {
       return args.asIteration().rep()
     },
-    Statement_break(s) {
+    BreakStatement(s) {
       output.push("break;")
     },
-    Statement_return(s) {
+    ReturnStatement(s) {
       output.push(`return ${gen(s.expression)};`)
     },
     Statement_shortreturn(s) {
@@ -98,13 +104,13 @@ export default function generate(program) {
     Variable(e) {
       return targetName(e)
     },
-    numeral(e) {
+    Number(e) {
       return e
     },
-    stringliteral(e) {
-      return e
+    StringLiteral(e) {
+      return `\"${e.chars}\"`
     },
-    BooleanVal(e) {
+    Boolean(e) {
       return e
     },
   }

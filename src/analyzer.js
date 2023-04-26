@@ -21,12 +21,12 @@ function must(condition, message, errorLocation) {
   if (!condition) core.error(message, errorLocation)
 }
 
-function mustNotAlreadyBeDeclared(context, name) {
-  must(!context.sees(name), `Identifier ${name} already declared`)
+function mustNotAlreadyBeDeclared(context, name, at) {
+  must(!context.sees(name), `Identifier ${name} already declared`, at)
 }
 
-function mustHaveBeenFound(entity, name) {
-  must(entity, `Identifier ${name} not declared`)
+function mustHaveBeenFound(entity, name, at) {
+  must(entity, `Identifier ${name} not declared`, at)
 }
 
 function mustHaveNumericType(e, at) {
@@ -37,12 +37,12 @@ function mustHaveNumericOrStringType(e, at) {
   must([INT, FLOAT, STRING].includes(e.type), "Expected a number or string", at)
 }
 
-function mustHaveBooleanType(entity) {
-  must(entity.type === core.Type.BOOLEAN, "Expected a boolean")
+function mustHaveBooleanType(entity, at) {
+  must(entity.type === core.Type.BOOLEAN, "Expected a boolean", at)
 }
 
-function mustBeTheSameType(entity1, entity2) {
-  must(entity1.type === entity2.type, "Operands do not have the same type") //add equivalent method
+function mustBeTheSameType(entity1, entity2, at) {
+  must(entity1.type === entity2.type, "Operands do not have the same type", at) //add equivalent method
 }
 
 function mustBeInLoop(context, at) {
@@ -67,6 +67,14 @@ function argumentsMustMatch(args, target, at) {
   // targetTypes.forEach((type, i) => mustBeAssignable(args[i], { toType: type }))
 }
 
+function mustHaveCorrectType(target, source, at) {
+  must(
+    target.type === source.type,
+    `${target.name} is not of type ${source.type.description}`,
+    at
+  )
+}
+
 class Context {
   constructor({
     parent = null,
@@ -81,12 +89,12 @@ class Context {
     return this.locals.has(name) || this.parent?.sees(name)
   }
   add(name, entity) {
-    mustNotAlreadyBeDeclared(this, name)
+    mustNotAlreadyBeDeclared(this, name, { at: name })
     this.locals.set(name, entity)
   }
   lookup(name) {
     const entity = this.locals.get(name) || this.parent?.lookup(name)
-    mustHaveBeenFound(entity, name)
+    mustHaveBeenFound(entity, name, { at: name })
     return entity
   }
   newChildContext(props) {
@@ -110,19 +118,25 @@ export default function analyze(sourceCode) {
       return new core.VariableDeclaration(variable, initializer.rep())
     },
     AssignStmt(target, _equals, source, _semicolon) {
-      context.lookup(target.rep())
-      return new core.AssignmentStatement(target.rep(), source.rep())
+      let targetLookup = context.lookup(target.rep())
+      mustHaveCorrectType(targetLookup, source.rep(), { at: source })
+      return new core.AssignmentStatement(targetLookup, source.rep())
     },
     IfStmt_short(_if, test, _colon, consequent, _stop) {
-      mustHaveBooleanType(test.rep())
+      mustHaveBooleanType(test.rep(), { at: test })
       return new core.IfStatementShort(test.rep(), consequent.rep())
     },
     IfStmt_long(_if, test, _colon, consequent, _else, alternate, _stop2) {
-      mustHaveBooleanType(test.rep())
+      mustHaveBooleanType(test.rep(), { at: test })
       return new core.IfStatement(test.rep(), consequent.rep(), alternate.rep())
     },
+    IfStmt_elseIf(_if, test, _colon, consequent, _else, trailingIfStatement) {
+      mustHaveBooleanType(test.rep(), { at: test })
+      const alternate = trailingIfStatement.rep()
+      return new core.IfStatement(test.rep(), consequent.rep(), alternate)
+    },
     WhileStmt(_while, test, _colon, body, _stop) {
-      mustHaveBooleanType(test.rep())
+      mustHaveBooleanType(test.rep(), { at: test })
       context = context.newChildContext({ inLoop: true })
       const b = body.rep()
       context = context.parent
@@ -146,7 +160,7 @@ export default function analyze(sourceCode) {
       )
     },
     LoopStmt(iterable, _loop, id, _colon, body, _stop) {
-      mustBeIterable(iterable.rep())
+      mustBeIterable(iterable.rep(), { at: iterable })
       let iterableObj
       if (iterable.rep().type === core.Type.INT) {
         iterableObj = new core.Variable(id.rep(), iterable.rep().type)
@@ -183,27 +197,32 @@ export default function analyze(sourceCode) {
       // context.lookup(id.rep())
       // console.log(context.locals.get(id.rep()).params)
       const argumentReps = args.rep()
-      argumentsMustMatch(argumentReps, context.locals.get(id.rep()))
+      argumentsMustMatch(argumentReps, context.locals.get(id.rep()), {
+        at: args,
+      })
       return new core.Call(id.rep(), argumentReps)
     },
     Arguments(args) {
       return args.asIteration().rep()
     },
     Statement_break(_break, _semicolon) {
-      mustBeInLoop(context)
+      mustBeInLoop(context, { at: _break })
       return new core.BreakStatement()
     },
     Statement_return(_return, expression, _semicolon) {
-      // mustBeInAFunction(context, returnKeyword)
-      // mustReturnSomething(context.function)
+      mustBeInAFunction(context, returnKeyword, { at: _return })
+      mustReturnSomething(context.function, { at: _return })
       const e = expression.rep()
-      // mustBeReturnable({ expression: e, from: context.function })
+      mustBeReturnable(
+        { expression: e, from: context.function },
+        { at: _return }
+      )
       return new core.ReturnStatement(e)
     },
 
     Statement_shortreturn(_return, _semicolon) {
-      // mustBeInAFunction(context)
-      // mustNotReturnAnything(context.function)
+      mustBeInAFunction(context, { at: _return })
+      mustNotReturnAnything(context.function, { at: _return })
       return new core.ShortReturnStatement()
     },
     id(chars) {
@@ -217,10 +236,11 @@ export default function analyze(sourceCode) {
     Exp_unary(op, right) {
       let type
       if (op.sourceString === "!") {
-        mustHaveBooleanType(right.rep())
+        mustHaveBooleanType(right.rep(), { at: right })
         type = BOOLEAN
       }
-      if (op === "-") mustHaveNumericType(right.rep()), (type = x.type)
+      if (op === "-")
+        mustHaveNumericType(right.rep(), { at: right }), (type = x.type)
       return new core.BinaryExpression(op.rep(), right.rep(), type)
     },
     Exp1_ternary(consequent, _if, test, _otherwise, alternate) {
@@ -233,22 +253,22 @@ export default function analyze(sourceCode) {
     },
     Exp2_or(left, _or, right) {
       let [x, y] = [left.rep(), right.rep()]
-      mustHaveBooleanType(x)
-      mustHaveBooleanType(y)
+      mustHaveBooleanType(x, { at: left })
+      mustHaveBooleanType(y, { at: right })
       x = new core.BinaryExpression("or", x, y, BOOLEAN)
       return x
       // return new core.BinaryExpression("or", left.rep(), right.rep())
     },
     Exp3_and(left, _and, right) {
       let [x, y] = [left.rep(), right.rep()]
-      mustHaveBooleanType(x)
-      mustHaveBooleanType(y)
+      mustHaveBooleanType(x, { at: left })
+      mustHaveBooleanType(y, { at: right })
       x = new core.BinaryExpression("and", x, y, BOOLEAN)
       return x
       // return new core.BinaryExpression("and", left.rep(), right.rep())
     },
     Exp4_op(left, op, right) {
-      mustBeTheSameType(left.rep(), right.rep())
+      mustBeTheSameType(left.rep(), right.rep(), { at: right })
       return new core.BinaryExpression(
         op.rep(),
         left.rep(),
@@ -259,26 +279,26 @@ export default function analyze(sourceCode) {
     Exp5_plusminus(left, op, right) {
       const [x, o, y] = [left.rep(), op.sourceString, right.rep()]
       if (o === "+") {
-        mustHaveNumericOrStringType(x)
+        mustHaveNumericOrStringType(x, { at: left })
       } else {
-        mustHaveNumericType(x)
+        mustHaveNumericType(x, { at: left })
       }
-      mustBeTheSameType(x, y)
+      mustBeTheSameType(x, y, { at: left })
       return new core.BinaryExpression(o, x, y, x.type)
       // return new core.BinaryExpression(op.rep(), left.rep(), right.rep())
     },
     Exp6_multdivmod(left, op, right) {
       const [x, o, y] = [left.rep(), op.sourceString, right.rep()]
-      // mustHaveNumericType(x)
-      left.parent?.right.parent?.mustBeTheSameType(x, y)
-      // mustBeTheSameType(x, y)
+      mustHaveNumericType(x, { at: left })
+      left.parent?.right.parent?.mustBeTheSameType(x, y, { at: left })
+      mustBeTheSameType(x, y, { at: left })
       return new core.BinaryExpression(o, x, y, x.type)
       // return new core.BinaryExpression(op.rep(), left.rep(), right.rep())
     },
     Exp7_exponent(left, op, right) {
       const [x, o, y] = [left.rep(), op.sourceString, right.rep()]
-      mustHaveNumericType(x)
-      mustBeTheSameType(x, y)
+      mustHaveNumericType(x, { at: left })
+      mustBeTheSameType(x, y, { at: left })
       return new core.BinaryExpression(o, x, y, x.type)
       // return new core.BinaryExpression(op.rep(), left.rep(), right.rep())
     },

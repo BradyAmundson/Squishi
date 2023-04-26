@@ -21,6 +21,7 @@ Squishi {
     WhileStmt		= while Exp ":" Statement+ stop
     IfStmt          = if Exp ":" Statement+ else Statement+ stop   --long
                     | if Exp ":" Statement+ stop                        --short
+                    | if Exp ":" Statement+ else IfStmt --elseIf
     ElseStmt        = else ":" Statement+ stop
     ElseIfStmt      = elseIf Exp ":" Statement+ stop
     Function        = f id ListOf<Param, ","> ":" Statement+ stop
