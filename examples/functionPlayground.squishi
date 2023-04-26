@@ -12,6 +12,10 @@ multiply: 11,2;
 //multiply:11, 3, 4;
 //yolo:;
 
-//f yolo x,y:
-//    return x * y;
-//stop
+
+
+f yolo x,y:
+    return x * y;
+stop
+
+yolo: 1,2;

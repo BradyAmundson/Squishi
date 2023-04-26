@@ -75,6 +75,16 @@ function mustHaveCorrectType(target, source, at) {
   )
 }
 
+function mustBeInAFunction(context, at) {
+  must(context.function !== null, "Return statement must be in a function", at)
+}
+
+function mustReturnSomething(expression, at) {
+  must(expression !== undefined, "Must return something", at)
+}
+
+// function functionMustExist(){}
+
 class Context {
   constructor({
     parent = null,
@@ -93,8 +103,9 @@ class Context {
     this.locals.set(name, entity)
   }
   lookup(name) {
-    const entity = this.locals.get(name) || this.parent?.lookup(name)
-    mustHaveBeenFound(entity, name, { at: name })
+    const nameRep = name.rep()
+    const entity = this.locals.get(nameRep) || this.parent?.lookup(name)
+    mustHaveBeenFound(entity, nameRep, { at: name })
     return entity
   }
   newChildContext(props) {
@@ -118,7 +129,7 @@ export default function analyze(sourceCode) {
       return new core.VariableDeclaration(variable, initializer.rep())
     },
     AssignStmt(target, _equals, source, _semicolon) {
-      let targetLookup = context.lookup(target.rep())
+      let targetLookup = context.lookup(target)
       mustHaveCorrectType(targetLookup, source.rep(), { at: source })
       return new core.AssignmentStatement(targetLookup, source.rep())
     },
@@ -181,10 +192,8 @@ export default function analyze(sourceCode) {
       context.add(id.rep(), func)
       context = context.newChildContext({ inLoop: false, function: func })
       for (const p of paramReps) context.add(p.name, p)
-      // console.log(context)
       const b = body.rep()
       context = context.parent
-      // console.log(context)
       return new core.FunctionDeclaration(id.rep(), paramReps, b)
     },
     Param(id) {
@@ -194,8 +203,10 @@ export default function analyze(sourceCode) {
       return call.rep()
     },
     Call(id, _colon, args) {
-      // context.lookup(id.rep())
+      context.lookup(id)
       // console.log(context.locals.get(id.rep()).params)
+      // functionMustExist(id, { at: id })
+
       const argumentReps = args.rep()
       argumentsMustMatch(argumentReps, context.locals.get(id.rep()), {
         at: args,
@@ -210,13 +221,9 @@ export default function analyze(sourceCode) {
       return new core.BreakStatement()
     },
     Statement_return(_return, expression, _semicolon) {
-      mustBeInAFunction(context, returnKeyword, { at: _return })
-      mustReturnSomething(context.function, { at: _return })
+      mustBeInAFunction(context, { at: _return })
+      mustReturnSomething(expression, { at: expression })
       const e = expression.rep()
-      mustBeReturnable(
-        { expression: e, from: context.function },
-        { at: _return }
-      )
       return new core.ReturnStatement(e)
     },
 
@@ -229,7 +236,7 @@ export default function analyze(sourceCode) {
       return chars.sourceString
     },
     Var(id) {
-      const entity = context.lookup(id.rep())
+      const entity = context.lookup(id)
       // mustHaveBeenFound(entity, id.rep())
       return entity
     },
@@ -244,12 +251,7 @@ export default function analyze(sourceCode) {
       return new core.BinaryExpression(op.rep(), right.rep(), type)
     },
     Exp1_ternary(consequent, _if, test, _otherwise, alternate) {
-      return new core.BinaryExpression(
-        consequent.rep(),
-        test.rep(),
-        alternate.rep(),
-        BOOLEAN
-      )
+      return new core.Conditional(consequent.rep(), test.rep(), alternate.rep())
     },
     Exp2_or(left, _or, right) {
       let [x, y] = [left.rep(), right.rep()]
@@ -289,9 +291,11 @@ export default function analyze(sourceCode) {
     },
     Exp6_multdivmod(left, op, right) {
       const [x, o, y] = [left.rep(), op.sourceString, right.rep()]
-      mustHaveNumericType(x, { at: left })
-      left.parent?.right.parent?.mustBeTheSameType(x, y, { at: left })
-      mustBeTheSameType(x, y, { at: left })
+      if (context.function === null) {
+        mustHaveNumericType(x, { at: left })
+        left.parent?.right.parent?.mustBeTheSameType(x, y, { at: left })
+        mustBeTheSameType(x, y, { at: left })
+      }
       return new core.BinaryExpression(o, x, y, x.type)
       // return new core.BinaryExpression(op.rep(), left.rep(), right.rep())
     },

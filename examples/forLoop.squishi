@@ -1,0 +1,4 @@
+pencil x = 0;
+for pencil z = 4; stop z > 3 fastfwd z = z + 1;
+    x = x + z;
+stop

@@ -96,6 +96,13 @@ export class BinaryExpression {
   }
 }
 
+export class Conditional {
+  constructor(consequent, test, alternate) {
+    Object.assign(this, { consequent, test, alternate })
+    this.trype = consequent.type
+  }
+}
+
 export class StringLiteral {
   constructor(chars) {
     this.chars = chars

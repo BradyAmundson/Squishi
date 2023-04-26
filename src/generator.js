@@ -14,7 +14,7 @@ export default function generate(program) {
 
   function gen(node) {
     // console.log(node)
-    // console.log(node.constructor.name)
+    console.log(node.constructor.name)
     return generators[node.constructor.name](node)
   }
 
@@ -27,11 +27,10 @@ export default function generate(program) {
       output.push(`console.log(${argument});`)
     },
     VariableDeclaration(d) {
-      // console.log(`variable: ${d.variable}`)
-      output.push(`let ${gen(d.variable)} = ${d.initializer};`)
+      output.push(`let ${gen(d.variable)} = ${gen(d.initializer)};`)
     },
     AssignmentStatement(s) {
-      output.push(`${gen(s.target)} = ${s.source};`)
+      output.push(`${gen(s.target)} = ${gen(s.source)};`)
     },
     IfStatementShort(s) {
       output.push(`if (${gen(s.test)}) {`)
@@ -59,25 +58,29 @@ export default function generate(program) {
       s.consequence.forEach((consequent) => gen(consequent))
       output.push("}")
     },
-    ForStmt(s) {
-      output.push(`for (${s.varDec}; ${s.test}; ${s.increment}) {`)
-      gen(s.consequent)
+    ForStatement(s) {
+      gen(s.varDec)
+      output.push(`while (${gen(s.test)}) {`)
+      s.consequence.forEach((consequent) => gen(consequent))
+      gen(s.increment)
       output.push("}")
     },
     LoopStatement(l) {
-      output.push(`for (const ${gen(l.iterator)} of ${l.collection}) {`)
+      output.push(`for (const ${gen(l.iterator)} of ${gen(l.collection)}) {`)
       l.body.forEach((bodyItem) => gen(bodyItem))
       output.push("}")
     },
-    Function(f) {
-      output.push(`function ${gen(f.name)}(${gen(f.params).join(", ")}) {`)
-      gen(f.body)
+    FunctionDeclaration(f) {
+      let genParams = []
+      f.params.forEach((param) => genParams.push(gen(param)))
+      output.push(`function ${f.name}(${genParams.join(", ")}) {`)
+      f.body.forEach((bodyItem) => gen(bodyItem))
       output.push("}")
     },
     Call(c) {
-      const args = gen(c.args)
-      const callee = gen(c.name)
-      return `${callee}(${args.join(",")})`
+      const args = []
+      c.args.forEach((arg) => args.push(gen(arg)))
+      output.push(`${c.name}(${args.join(",")});`)
     },
     Arguments(args) {
       return args.asIteration().rep()
@@ -100,6 +103,9 @@ export default function generate(program) {
     BinaryExpression(e) {
       const op = { "==": "===", "!=": "!==" }[e.op] ?? e.op
       return `(${gen(e.left)} ${op} ${gen(e.right)})`
+    },
+    Conditional(e) {
+      return `${gen(e.test)} ? ${gen(e.consequent)} : ${gen(e.alternate)}`
     },
     Variable(e) {
       return targetName(e)
