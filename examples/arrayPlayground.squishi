@@ -1,0 +1,9 @@
+pencil firstArray = [1,2,3];
+
+speak(firstArray);
+
+pencil second = [0];
+
+pencil value = 5;
+pencil other = firstArray[value];
+pencil z = firstArray[0];

@@ -1,0 +1,26 @@
+f binarySearch arr, toFind, arrLength:
+    pencil left = 0;
+    pencil right = 4 - 1;
+
+    while(left <= right):
+        pencil mid = (left + right) / 2;
+        mid = mid - (mid % 1);
+        pencil midVal = arr[mid];
+
+        if( midVal == toFind ):
+            return mid;
+        else if( midVal < toFind ):
+            left = mid + 1;
+        else
+            right = mid - 1;
+        stop
+        stop
+    stop
+
+    return -1;
+stop
+
+pencil arr = [7, 20, 4, 18, 39, 4];
+pencil target = 18;
+binarySearch: arr, target, 6;
+//speak(index);

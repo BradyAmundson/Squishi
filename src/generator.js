@@ -14,7 +14,7 @@ export default function generate(program) {
 
   function gen(node) {
     // console.log(node)
-    console.log(node.constructor.name)
+    // console.log(node.constructor.name)
     return generators[node.constructor.name](node)
   }
 
@@ -106,6 +106,12 @@ export default function generate(program) {
     },
     Conditional(e) {
       return `${gen(e.test)} ? ${gen(e.consequent)} : ${gen(e.alternate)}`
+    },
+    ArrayExpression(e){
+      return `[${e.elements}]`
+    },
+    ArrayCall(e){
+      return `${gen(e.name)}[${gen(e.index)}]`
     },
     Variable(e) {
       return targetName(e)

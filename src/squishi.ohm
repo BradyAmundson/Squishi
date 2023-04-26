@@ -52,9 +52,11 @@ Squishi {
     Exp8			= "[" Exp "]" --brackets
                     | Exp9
     Exp9            = "(" Exp ")"      --parens
+                    | ArrayCall
     				| Term
                     | Call              --call
                     | MethodCall
+
 
 
     BooleanVal		= true | false
@@ -63,8 +65,10 @@ Squishi {
                     | Var
      	            | BooleanVal
                     | Array
+                    | EmptyArray
 
     MethodCall      = Term "." id ("(" ListOf<Exp, ","> ")")?
+    ArrayCall       = Var "[" Term "]"
     pencil			= "pencil" ~idchar
     speak			= "speak" ~idchar
     for				= "for" ~idchar
@@ -72,6 +76,7 @@ Squishi {
     stop			= "stop" ~idchar
     fastfwd			= "fastfwd" ~idchar
     Array           = "[" ListOf<Term, ","> "]"
+    EmptyArray      = "[""]" ":" Term
     while           = "while" ~idchar
     loop            = "loop" ~idchar
     true            = "true" ~idchar

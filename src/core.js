@@ -99,7 +99,7 @@ export class BinaryExpression {
 export class Conditional {
   constructor(consequent, test, alternate) {
     Object.assign(this, { consequent, test, alternate })
-    this.trype = consequent.type
+    this.type = consequent.type
   }
 }
 
@@ -114,6 +114,21 @@ export class Variable {
   constructor(name, type) {
     this.name = name
     this.type = type
+  }
+}
+
+export class ArrayExpression {
+  constructor(elements){
+    this.elements = elements
+    this.type = new ArrayType(elements[0].type)
+  }
+}
+
+export class ArrayCall{
+  constructor(name, index){
+    this.name = name
+    this.index = index
+    this.type = name.type
   }
 }
 
@@ -132,6 +147,14 @@ export class Type {
     Object.assign(this, { description })
   }
 }
+
+export class ArrayType extends Type {
+  constructor(baseType) {
+    super(`[${baseType.description}]`)
+    this.baseType = baseType
+  }
+}
+
 
 // Return a compact and pretty string representation of the node graph,
 // taking care of cycles. Written here from scratch because the built-in

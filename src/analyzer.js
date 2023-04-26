@@ -318,6 +318,15 @@ export default function analyze(sourceCode) {
     stringliteral(_open, chars, _close) {
       return new core.StringLiteral(chars.sourceString)
     },
+    Array(_open, args, _close) {
+      const elements = args.asIteration().children.map(e => e.rep())
+      // mustAllHaveSameType(elements, { at: args })
+      return new core.ArrayExpression(elements)
+    },
+    ArrayCall(id, _open, index, _close){
+      //mustBeTypeNumeral(index, { at: index})
+        return new core.ArrayCall(id.rep(), index.rep())
+    },
     BooleanVal(bool) {
       return bool.rep()
     },
