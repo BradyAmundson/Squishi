@@ -33,7 +33,7 @@ Squishi {
     keyword			= speak | pencil | for | step | stop | fastfwd | while | true | false | else | if | elseIf | loop
     Var				= id
 
-    Exp             = ("-" | "!") Exp8                        -- unary
+    Exp             = "!" Exp8                        -- unary
                     | Exp1
     Exp1            = Exp1 "if" Exp1 "otherwise" Exp                   -- ternary
                     | Exp2
@@ -87,7 +87,7 @@ Squishi {
     f               = "f" ~idchar
     break           = "break" ~idchar
     return          = "return" ~idchar
-    numeral 		= digit+ ("." digit+)?
+    numeral 		= ("-")? digit+ ("." digit+)?
     stringliteral 	= "\"" (~"\""any)* "\""
     space      	   += "//" (~"\n" any)*				--comment
 }

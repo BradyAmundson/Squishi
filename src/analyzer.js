@@ -312,7 +312,7 @@ export default function analyze(sourceCode) {
     Exp9_parens(_open, expression, _close) {
       return expression.rep()
     },
-    numeral(_leading, _dot, _fractional) {
+    numeral(_negative, _leading, _dot, _fractional) {
       return Number(this.sourceString)
     },
     stringliteral(_open, chars, _close) {

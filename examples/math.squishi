@@ -1,4 +1,4 @@
-pencil x = 2;
-pencil z = 4;
-x = x + 2;
-pencil product = x * z;
+pencil x = -2;
+//pencil z = 4;
+//x = x + 2;
+//pencil product = x * z;

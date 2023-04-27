@@ -1,3 +1,5 @@
+pencil negative = -1;
+
 pencil firstArray = [1,2,3];
 
 speak(firstArray);
