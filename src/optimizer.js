@@ -1,10 +1,12 @@
 // Supported optimizations:
 //   - constant folding
 //   - some strength reductions (+0, -0, *0, *1, etc.)
+//   - for loop unrolling (only with assignments)
+//   - loopi over empty String is no-op
+//   - assignments to self (x = x) turn into no-ops
 
 import * as core from "./core.js"
 export default function optimize(node) {
-  console.log(node)
   return optimizers[node.constructor.name](node)
 }
 
@@ -72,22 +74,72 @@ const optimizers = {
       // while false is a no-op
       return []
     }
-    s.body = optimize(s.body)
+    s.body = optimize(s.consequence)
     return s
   },
   LoopStatement(s) {
-    console.log("\n\n")
     s.iterator = optimize(s.iterator)
-    console.log("\nITERABLE")
-    // console.log('iterator')
     s.collection = optimize(s.collection)
-    console.log(s.collection)
     s.body = optimize(s.body)
+    console.log("===IN LOOP===")
+    console.log(s)
+    if (
+      s.collection.type.description === "string" &&
+      s.collection.chars.length === 0
+    ) {
+      return []
+    }
+    return s
+  },
+  ForStatement(s) {
+    s.varDec = optimize(s.varDec)
+    s.test = optimize(s.test)
+    s.increment = optimize(s.increment)
+    s.consequence = optimize(s.consequence)
+    console.log("===BEFORE===")
+    console.log(s)
+    let unrolled = []
+    let numIterations =
+      (s.test.right - s.varDec.initializer) / s.increment.source.right
+    let iterator = s.test.left
+    let operator = s.test.op
+    if (operator === "<") {
+      for (let i = 0; i < numIterations; i++) {
+        console.log("===INCREMENT ASSIGNMENT===")
+        unrolled.push(new core.AssignmentStatement(iterator, i))
+        console.log(new core.AssignmentStatement(iterator, i))
+        for (let j = 0; j < s.consequence.length; j++) {
+          let currentStatement = s.consequence[j]
+          if (currentStatement.constructor.name === "AssignmentStatement") {
+            console.log("===CURRENT STATEMENT===")
+            console.log(currentStatement)
+            let unrolledAssignment = new core.AssignmentStatement(
+              currentStatement.target,
+              optimize(currentStatement.source)
+            )
+            unrolled.push(unrolledAssignment)
+          } else {
+            unrolled.push(currentStatement)
+          }
+        }
+      }
+      s.consequence = unrolled
+    }
+    console.log("===AFTER===")
+    console.log(s)
     return s
   },
   ArrayExpression(e) {
     e.elements = optimize(e.elements)
     return e
+  },
+  Assignment(s) {
+    s.source = optimize(s.source)
+    s.target = optimize(s.target)
+    if (s.source === s.target) {
+      return []
+    }
+    return s
   },
   Variable(v) {
     return v
@@ -109,5 +161,8 @@ const optimizers = {
   Array(a) {
     // Flatmap since each element can be an array
     return a.flatMap(optimize)
+  },
+  BreakStatement(s) {
+    return s
   },
 }

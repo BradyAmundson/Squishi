@@ -1,0 +1,7 @@
+pencil x = 1;
+"".loop item:
+  x = x + 1;
+stop
+
+pencil y = 10;
+y = y;
