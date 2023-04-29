@@ -123,7 +123,7 @@ const optimizers = {
       s.consequence = unrolled
     }
     // console.log("===AFTER===")
-    // console.log(s.consequence)
+    // console.log(s)
     return s
   },
   ArrayExpression(e) {
