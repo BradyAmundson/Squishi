@@ -7,6 +7,7 @@
 
 import * as core from "./core.js"
 export default function optimize(node) {
+  // console.log(node)
   return optimizers[node.constructor.name](node)
 }
 
@@ -18,10 +19,6 @@ const optimizers = {
   VariableDeclaration(d) {
     d.variable = optimize(d.variable.name)
     d.initializer = optimize(d.initializer)
-    return d
-  },
-  TypeDeclaration(d) {
-    d.type = optimize(d.type)
     return d
   },
   AssignmentStatement(s) {
@@ -81,8 +78,6 @@ const optimizers = {
     s.iterator = optimize(s.iterator)
     s.collection = optimize(s.collection)
     s.body = optimize(s.body)
-    console.log("===IN LOOP===")
-    console.log(s)
     if (
       s.collection.type.description === "string" &&
       s.collection.chars.length === 0
@@ -92,12 +87,14 @@ const optimizers = {
     return s
   },
   ForStatement(s) {
+    // console.log(s)
+    // console.log("======")
     s.varDec = optimize(s.varDec)
     s.test = optimize(s.test)
     s.increment = optimize(s.increment)
     s.consequence = optimize(s.consequence)
-    console.log("===BEFORE===")
-    console.log(s)
+    // console.log("===BEFORE===")
+    // console.log(s)
     let unrolled = []
     let numIterations =
       (s.test.right - s.varDec.initializer) / s.increment.source.right
@@ -105,14 +102,14 @@ const optimizers = {
     let operator = s.test.op
     if (operator === "<") {
       for (let i = 0; i < numIterations; i++) {
-        console.log("===INCREMENT ASSIGNMENT===")
+        // console.log("===INCREMENT ASSIGNMENT===")
         unrolled.push(new core.AssignmentStatement(iterator, i))
-        console.log(new core.AssignmentStatement(iterator, i))
+        // console.log(new core.AssignmentStatement(iterator, i))
         for (let j = 0; j < s.consequence.length; j++) {
           let currentStatement = s.consequence[j]
           if (currentStatement.constructor.name === "AssignmentStatement") {
-            console.log("===CURRENT STATEMENT===")
-            console.log(currentStatement)
+            // console.log("===CURRENT STATEMENT===")
+            // console.log(currentStatement)
             let unrolledAssignment = new core.AssignmentStatement(
               currentStatement.target,
               optimize(currentStatement.source)
@@ -125,21 +122,13 @@ const optimizers = {
       }
       s.consequence = unrolled
     }
-    console.log("===AFTER===")
-    console.log(s)
+    // console.log("===AFTER===")
+    // console.log(s.consequence)
     return s
   },
   ArrayExpression(e) {
     e.elements = optimize(e.elements)
     return e
-  },
-  Assignment(s) {
-    s.source = optimize(s.source)
-    s.target = optimize(s.target)
-    if (s.source === s.target) {
-      return []
-    }
-    return s
   },
   Variable(v) {
     return v
@@ -163,6 +152,9 @@ const optimizers = {
     return a.flatMap(optimize)
   },
   BreakStatement(s) {
+    return s
+  },
+  ShortReturnStatement(s) {
     return s
   },
 }
