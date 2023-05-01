@@ -91,7 +91,10 @@ function mustReturnSomething(expression, at) {
   must(expression !== undefined, "Must return something", at)
 }
 
-// function functionMustExist(){}
+function functionMustExist(entity, at) {
+  must(entity, `Identifier not declared`, at)
+  must(entity instanceof core.Function, `${entity.name} is not a function`, at)
+}
 
 class Context {
   constructor({
@@ -222,10 +225,8 @@ export default function analyze(sourceCode) {
       return call.rep()
     },
     Call(id, _colon, args) {
-      context.lookup(id)
-      // console.log(context.locals.get(id.rep()).params)
-      // functionMustExist(id, { at: id })
-
+      const entity = context.lookup(id)
+      functionMustExist(entity, { at: id })
       const argumentReps = args.rep()
       argumentsMustMatch(argumentReps, context.locals.get(id.rep()), {
         at: args,
@@ -266,11 +267,6 @@ export default function analyze(sourceCode) {
         }
         type = BOOLEAN
       }
-      // if (op === "-") {
-      //   if (context.function === null) {
-      //     mustHaveNumericType(right.rep(), { at: right }), (type = x.type)
-      //   }
-      // }
       return new core.BinaryExpression(op.rep(), right.rep(), type)
     },
     Exp1_ternary(consequent, _if, test, _otherwise, alternate) {
