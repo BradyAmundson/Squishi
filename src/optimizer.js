@@ -149,7 +149,6 @@ const optimizers = {
     return e
   },
   Array(a) {
-    // Flatmap since each element can be an array
     return a.flatMap(optimize)
   },
   BreakStatement(s) {

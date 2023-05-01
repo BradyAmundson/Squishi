@@ -49,7 +49,6 @@ export class ForStatement {
 }
 
 export class LoopStatement {
-  // Example: for ball in balls { ball.bounce();  }
   constructor(iterator, collection, body) {
     Object.assign(this, { iterator, collection, body })
   }
@@ -62,7 +61,6 @@ export class FunctionDeclaration {
 }
 
 export class Function {
-  // Generated when processing a function declaration
   constructor(name, params) {
     Object.assign(this, { name, params })
   }
@@ -79,7 +77,6 @@ export class BreakStatement {
 }
 
 export class ReturnStatement {
-  // Example: return c[5]
   constructor(expression) {
     this.expression = expression
   }
@@ -92,7 +89,6 @@ export class ShortReturnStatement {
 export class BinaryExpression {
   constructor(op, left, right, type) {
     Object.assign(this, { op, left, right, type })
-    // this.type = Type.BOOLEAN
   }
 }
 
@@ -133,7 +129,6 @@ export class ArrayCall {
 }
 
 export class Type {
-  // Type of all basic type int, float, string, etc. and superclass of others
   static BOOLEAN = new Type("boolean")
   static INT = new Type("int")
   static FLOAT = new Type("float")
@@ -142,9 +137,6 @@ export class Type {
   static VOID = new Type("void")
   static ANY = new Type("any")
   constructor(description) {
-    // The description is a convenient way to view the type. For basic
-    // types or structs, it will just be the names. For arrays, you will
-    // see "[T]". For optionals, "T?". For functions "(T1,...Tn)->T0".
     Object.assign(this, { description })
   }
 }
@@ -157,14 +149,9 @@ export class ArrayType extends Type {
   }
 }
 
-// Return a compact and pretty string representation of the node graph,
-// taking care of cycles. Written here from scratch because the built-in
-// inspect function, while nice, isn't nice enough. Defined properly in
-// the root class prototype so that it automatically runs on console.log.
 Program.prototype[util.inspect.custom] = function () {
   const tags = new Map()
 
-  // Attach a unique integer tag to every node
   function tag(node) {
     if (tags.has(node) || typeof node !== "object" || node === null) return
     tags.set(node, tags.size + 1)
@@ -195,8 +182,6 @@ export function error(message, node) {
   throw new Error(`${node.at.source.getLineAndColumnMessage()}${message}`)
 }
 
-// String.prototype.type = Type.STRING
 Number.prototype.type = Type.INT
-// BigInt.prototype.type = Type.INT
 Boolean.prototype.type = Type.BOOLEAN
 Array.prototype.type = Type.ARRAY

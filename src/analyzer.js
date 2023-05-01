@@ -10,7 +10,6 @@ const STRING = core.Type.STRING
 const BOOLEAN = core.Type.BOOLEAN
 const ARRAY = core.ArrayType.ARRAY
 
-// Throw an error message that takes advantage of Ohm's messaging
 export function error(message, node) {
   if (node) {
     throw new Error(`${node.source.getLineAndColumnMessage()}${message}`)
@@ -43,7 +42,7 @@ function mustHaveBooleanType(entity, at) {
 }
 
 function mustBeTheSameType(entity1, entity2, at) {
-  must(entity1.type === entity2.type, "Operands do not have the same type", at) //add equivalent method
+  must(entity1.type === entity2.type, "Operands do not have the same type", at)
 }
 
 function mustBeInLoop(context, at) {
@@ -72,7 +71,6 @@ function argumentsMustMatch(args, target, at) {
     `${targetParams.length} argument(s) required but ${args.length} passed`,
     at
   )
-  // targetTypes.forEach((type, i) => mustBeAssignable(args[i], { toType: type }))
 }
 
 function mustHaveCorrectType(target, source, at) {
@@ -106,7 +104,6 @@ class Context {
     Object.assign(this, { parent, locals, inLoop, function: f })
   }
   sees(name) {
-    // Search "outward" through enclosing scopes
     return this.locals.has(name) || this.parent?.sees(name)
   }
   add(name, entity) {
@@ -136,7 +133,7 @@ export default function analyze(sourceCode) {
     },
     VarDeclaration(_pencil, id, _equal, initializer, _semicolon) {
       mustNotAlreadyBeDeclared(context, id.rep(), { at: id })
-      const variable = new core.Variable(id.rep(), initializer.rep().type) // fix this later
+      const variable = new core.Variable(id.rep(), initializer.rep().type)
       context.add(id.rep(), variable)
       return new core.VariableDeclaration(variable, initializer.rep())
     },
@@ -256,7 +253,6 @@ export default function analyze(sourceCode) {
     },
     Var(id) {
       const entity = context.lookup(id)
-      // mustHaveBeenFound(entity, id.rep())
       return entity
     },
     Exp_unary(op, right) {
@@ -280,7 +276,6 @@ export default function analyze(sourceCode) {
       }
       x = new core.BinaryExpression("or", x, y, BOOLEAN)
       return x
-      // return new core.BinaryExpression("or", left.rep(), right.rep())
     },
     Exp3_and(left, _and, right) {
       let [x, y] = [left.rep(), right.rep()]
@@ -290,7 +285,6 @@ export default function analyze(sourceCode) {
       }
       x = new core.BinaryExpression("and", x, y, BOOLEAN)
       return x
-      // return new core.BinaryExpression("and", left.rep(), right.rep())
     },
     Exp4_op(left, op, right) {
       if (context.function === null) {
@@ -314,7 +308,6 @@ export default function analyze(sourceCode) {
         mustBeTheSameType(x, y, { at: left })
       }
       return new core.BinaryExpression(o, x, y, x.type)
-      // return new core.BinaryExpression(op.rep(), left.rep(), right.rep())
     },
     Exp6_multdivmod(left, op, right) {
       const [x, o, y] = [left.rep(), op.sourceString, right.rep()]
@@ -323,7 +316,6 @@ export default function analyze(sourceCode) {
         mustBeTheSameType(x, y, { at: left })
       }
       return new core.BinaryExpression(o, x, y, x.type)
-      // return new core.BinaryExpression(op.rep(), left.rep(), right.rep())
     },
     Exp7_exponent(left, op, right) {
       const [x, o, y] = [left.rep(), op.sourceString, right.rep()]
@@ -332,7 +324,6 @@ export default function analyze(sourceCode) {
         mustBeTheSameType(x, y, { at: left })
       }
       return new core.BinaryExpression(o, x, y, x.type)
-      // return new core.BinaryExpression(op.rep(), left.rep(), right.rep())
     },
     Exp8_brackets(_open, expression, _close) {
       return expression.rep()
@@ -348,11 +339,9 @@ export default function analyze(sourceCode) {
     },
     Array(_open, args, _close) {
       const elements = args.asIteration().children.map((e) => e.rep())
-      // mustAllHaveSameType(elements, { at: args })
       return new core.ArrayExpression(elements)
     },
     ArrayCall(id, _open, index, _close) {
-      //mustBeTypeNumeral(index, { at: index})
       return new core.ArrayCall(id.rep(), index.rep())
     },
     BooleanVal(bool) {

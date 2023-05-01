@@ -13,8 +13,6 @@ export default function generate(program) {
   })(new Map())
 
   function gen(node) {
-    // console.log(node)
-    // console.log(node.constructor.name)
     return generators[node.constructor.name](node)
   }
 
@@ -35,7 +33,6 @@ export default function generate(program) {
     IfStatementShort(s) {
       output.push(`if (${gen(s.test)}) {`)
       s.consequence.forEach((consequent) => gen(consequent))
-      // gen(s.consequent)
       output.push("}")
     },
     IfStatement(s) {
@@ -82,9 +79,6 @@ export default function generate(program) {
       c.args.forEach((arg) => args.push(gen(arg)))
       output.push(`${c.name}(${args.join(",")});`)
     },
-    // Arguments(args) {
-    //   return args.asIteration().rep()
-    // },
     BreakStatement(s) {
       output.push("break;")
     },
@@ -94,12 +88,6 @@ export default function generate(program) {
     ShortReturnStatement(s) {
       output.push("return;")
     },
-    // id(chars) {
-    //   return chars.sourceString
-    // },
-    // Var(id) {
-    //   return targetName(id)
-    // },
     BinaryExpression(e) {
       const op = { "==": "===", "!=": "!==" }[e.op] ?? e.op
       return `(${gen(e.left)} ${op} ${gen(e.right)})`
