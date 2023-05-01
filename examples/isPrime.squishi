@@ -1,0 +1,15 @@
+f isPrime number:
+  if number > 1:
+    for pencil i = 2; stop i < number fastfwd i = i + 1;
+      if number % i == 0:
+        speak("not prime");
+        return;
+      stop
+    stop
+  stop
+  speak("prime");
+  return;
+stop
+
+isPrime: 5;
+isPrime: 15;
