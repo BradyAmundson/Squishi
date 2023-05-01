@@ -1,8 +1,14 @@
 pencil negative = -1;
+//pencil negative = 4;
 
 pencil firstArray = [1,2,3];
 
 speak(firstArray);
+
+pencil anArray = [2, 5, 9];
+[2,4,5].loop item:
+    speak(item);
+stop
 
 pencil second = [0];
 

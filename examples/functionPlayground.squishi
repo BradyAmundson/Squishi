@@ -1,3 +1,14 @@
+f coolFunction x, y:
+    pencil z = x + y;
+    if z > 7:
+        return;
+    else
+        return z;
+    stop
+stop
+
+coolFunction: 4, 7;
+
 f multiply x, y:
     pencil z = x * y;
     return z;

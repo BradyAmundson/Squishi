@@ -82,24 +82,24 @@ export default function generate(program) {
       c.args.forEach((arg) => args.push(gen(arg)))
       output.push(`${c.name}(${args.join(",")});`)
     },
-    Arguments(args) {
-      return args.asIteration().rep()
-    },
+    // Arguments(args) {
+    //   return args.asIteration().rep()
+    // },
     BreakStatement(s) {
       output.push("break;")
     },
     ReturnStatement(s) {
       output.push(`return ${gen(s.expression)};`)
     },
-    Statement_shortreturn(s) {
+    ShortReturnStatement(s) {
       output.push("return;")
     },
-    id(chars) {
-      return chars.sourceString
-    },
-    Var(id) {
-      return targetName(id)
-    },
+    // id(chars) {
+    //   return chars.sourceString
+    // },
+    // Var(id) {
+    //   return targetName(id)
+    // },
     BinaryExpression(e) {
       const op = { "==": "===", "!=": "!==" }[e.op] ?? e.op
       return `(${gen(e.left)} ${op} ${gen(e.right)})`
@@ -107,10 +107,10 @@ export default function generate(program) {
     Conditional(e) {
       return `${gen(e.test)} ? ${gen(e.consequent)} : ${gen(e.alternate)}`
     },
-    ArrayExpression(e){
+    ArrayExpression(e) {
       return `[${e.elements}]`
     },
-    ArrayCall(e){
+    ArrayCall(e) {
       return `${gen(e.name)}[${gen(e.index)}]`
     },
     Variable(e) {

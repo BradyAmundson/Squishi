@@ -118,14 +118,14 @@ export class Variable {
 }
 
 export class ArrayExpression {
-  constructor(elements){
+  constructor(elements) {
     this.elements = elements
     this.type = new ArrayType(elements[0].type)
   }
 }
 
-export class ArrayCall{
-  constructor(name, index){
+export class ArrayCall {
+  constructor(name, index) {
     this.name = name
     this.index = index
     this.type = name.type
@@ -138,6 +138,7 @@ export class Type {
   static INT = new Type("int")
   static FLOAT = new Type("float")
   static STRING = new Type("string")
+
   static VOID = new Type("void")
   static ANY = new Type("any")
   constructor(description) {
@@ -149,12 +150,12 @@ export class Type {
 }
 
 export class ArrayType extends Type {
+  static ARRAY = new ArrayType(Type.ANY)
   constructor(baseType) {
     super(`[${baseType.description}]`)
     this.baseType = baseType
   }
 }
-
 
 // Return a compact and pretty string representation of the node graph,
 // taking care of cycles. Written here from scratch because the built-in
@@ -201,3 +202,4 @@ export function error(message, node) {
 Number.prototype.type = Type.INT
 // BigInt.prototype.type = Type.INT
 Boolean.prototype.type = Type.BOOLEAN
+Array.prototype.type = Type.ARRAY

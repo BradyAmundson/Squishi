@@ -8,6 +8,7 @@ const INT = core.Type.INT
 const FLOAT = core.Type.FLOAT
 const STRING = core.Type.STRING
 const BOOLEAN = core.Type.BOOLEAN
+const ARRAY = core.ArrayType.ARRAY
 
 // Throw an error message that takes advantage of Ohm's messaging
 export function error(message, node) {
@@ -50,11 +51,18 @@ function mustBeInLoop(context, at) {
 }
 
 function mustBeIterable(e, at) {
-  must(
-    [INT, FLOAT, STRING].includes(e.type),
-    `Cannot loop through type ${e.type}`,
-    at
-  )
+  if (e.type.constructor.name != "Type") {
+    must(
+      e.type.constructor.name === "ArrayType",
+      `Cannot loop throuhg type ${e.type.constructor.name}`
+    )
+  } else {
+    must(
+      [INT, FLOAT, STRING].includes(e.type),
+      `Cannot loop through type ${e.type}`,
+      at
+    )
+  }
 }
 
 function argumentsMustMatch(args, target, at) {
@@ -124,30 +132,41 @@ export default function analyze(sourceCode) {
       return new core.PrintStatement(argument.rep())
     },
     VarDeclaration(_pencil, id, _equal, initializer, _semicolon) {
+      mustNotAlreadyBeDeclared(context, id.rep(), { at: id })
       const variable = new core.Variable(id.rep(), initializer.rep().type) // fix this later
       context.add(id.rep(), variable)
       return new core.VariableDeclaration(variable, initializer.rep())
     },
     AssignStmt(target, _equals, source, _semicolon) {
       let targetLookup = context.lookup(target)
-      mustHaveCorrectType(targetLookup, source.rep(), { at: source })
+      if (context.function === null) {
+        mustHaveCorrectType(targetLookup, source.rep(), { at: source })
+      }
       return new core.AssignmentStatement(targetLookup, source.rep())
     },
     IfStmt_short(_if, test, _colon, consequent, _stop) {
-      mustHaveBooleanType(test.rep(), { at: test })
+      if (context.function === null) {
+        mustHaveBooleanType(test.rep(), { at: test })
+      }
       return new core.IfStatementShort(test.rep(), consequent.rep())
     },
     IfStmt_long(_if, test, _colon, consequent, _else, alternate, _stop2) {
-      mustHaveBooleanType(test.rep(), { at: test })
+      if (context.function === null) {
+        mustHaveBooleanType(test.rep(), { at: test })
+      }
       return new core.IfStatement(test.rep(), consequent.rep(), alternate.rep())
     },
     IfStmt_elseIf(_if, test, _colon, consequent, _else, trailingIfStatement) {
-      mustHaveBooleanType(test.rep(), { at: test })
+      if (context.function === null) {
+        mustHaveBooleanType(test.rep(), { at: test })
+      }
       const alternate = trailingIfStatement.rep()
       return new core.IfStatement(test.rep(), consequent.rep(), alternate)
     },
     WhileStmt(_while, test, _colon, body, _stop) {
-      mustHaveBooleanType(test.rep(), { at: test })
+      if (context.function === null) {
+        mustHaveBooleanType(test.rep(), { at: test })
+      }
       context = context.newChildContext({ inLoop: true })
       const b = body.rep()
       context = context.parent
@@ -177,7 +196,7 @@ export default function analyze(sourceCode) {
         iterableObj = new core.Variable(id.rep(), iterable.rep().type)
       } else if (iterable.rep().type === core.Type.STRING) {
         iterableObj = new core.Variable(id.rep(), iterable.rep().type)
-      } else if (iterable.rep().type === core.Type.ARRAY) {
+      } else if (iterable.rep().type.constructor.name === "ArrayType") {
         iterableObj = new core.Variable(id.rep(), iterable.rep().type.baseType)
       }
       context = context.newChildContext({ inLoop: true })
@@ -229,7 +248,6 @@ export default function analyze(sourceCode) {
 
     Statement_shortreturn(_return, _semicolon) {
       mustBeInAFunction(context, { at: _return })
-      mustNotReturnAnything(context.function, { at: _return })
       return new core.ShortReturnStatement()
     },
     id(chars) {
@@ -243,11 +261,16 @@ export default function analyze(sourceCode) {
     Exp_unary(op, right) {
       let type
       if (op.sourceString === "!") {
-        mustHaveBooleanType(right.rep(), { at: right })
+        if (context.function === null) {
+          mustHaveBooleanType(right.rep(), { at: right })
+        }
         type = BOOLEAN
       }
-      if (op === "-")
-        mustHaveNumericType(right.rep(), { at: right }), (type = x.type)
+      // if (op === "-") {
+      //   if (context.function === null) {
+      //     mustHaveNumericType(right.rep(), { at: right }), (type = x.type)
+      //   }
+      // }
       return new core.BinaryExpression(op.rep(), right.rep(), type)
     },
     Exp1_ternary(consequent, _if, test, _otherwise, alternate) {
@@ -255,22 +278,28 @@ export default function analyze(sourceCode) {
     },
     Exp2_or(left, _or, right) {
       let [x, y] = [left.rep(), right.rep()]
-      mustHaveBooleanType(x, { at: left })
-      mustHaveBooleanType(y, { at: right })
+      if (context.function === null) {
+        mustHaveBooleanType(x, { at: left })
+        mustHaveBooleanType(y, { at: right })
+      }
       x = new core.BinaryExpression("or", x, y, BOOLEAN)
       return x
       // return new core.BinaryExpression("or", left.rep(), right.rep())
     },
     Exp3_and(left, _and, right) {
       let [x, y] = [left.rep(), right.rep()]
-      mustHaveBooleanType(x, { at: left })
-      mustHaveBooleanType(y, { at: right })
+      if (context.function === null) {
+        mustHaveBooleanType(x, { at: left })
+        mustHaveBooleanType(y, { at: right })
+      }
       x = new core.BinaryExpression("and", x, y, BOOLEAN)
       return x
       // return new core.BinaryExpression("and", left.rep(), right.rep())
     },
     Exp4_op(left, op, right) {
-      mustBeTheSameType(left.rep(), right.rep(), { at: right })
+      if (context.function === null) {
+        mustBeTheSameType(left.rep(), right.rep(), { at: right })
+      }
       return new core.BinaryExpression(
         op.rep(),
         left.rep(),
@@ -280,12 +309,14 @@ export default function analyze(sourceCode) {
     },
     Exp5_plusminus(left, op, right) {
       const [x, o, y] = [left.rep(), op.sourceString, right.rep()]
-      if (o === "+") {
-        mustHaveNumericOrStringType(x, { at: left })
-      } else {
-        mustHaveNumericType(x, { at: left })
+      if (context.function === null) {
+        if (o === "+") {
+          mustHaveNumericOrStringType(x, { at: left })
+        } else {
+          mustHaveNumericType(x, { at: left })
+        }
+        mustBeTheSameType(x, y, { at: left })
       }
-      mustBeTheSameType(x, y, { at: left })
       return new core.BinaryExpression(o, x, y, x.type)
       // return new core.BinaryExpression(op.rep(), left.rep(), right.rep())
     },
@@ -301,8 +332,10 @@ export default function analyze(sourceCode) {
     },
     Exp7_exponent(left, op, right) {
       const [x, o, y] = [left.rep(), op.sourceString, right.rep()]
-      mustHaveNumericType(x, { at: left })
-      mustBeTheSameType(x, y, { at: left })
+      if (context.function === null) {
+        mustHaveNumericType(x, { at: left })
+        mustBeTheSameType(x, y, { at: left })
+      }
       return new core.BinaryExpression(o, x, y, x.type)
       // return new core.BinaryExpression(op.rep(), left.rep(), right.rep())
     },
@@ -319,13 +352,13 @@ export default function analyze(sourceCode) {
       return new core.StringLiteral(chars.sourceString)
     },
     Array(_open, args, _close) {
-      const elements = args.asIteration().children.map(e => e.rep())
+      const elements = args.asIteration().children.map((e) => e.rep())
       // mustAllHaveSameType(elements, { at: args })
       return new core.ArrayExpression(elements)
     },
-    ArrayCall(id, _open, index, _close){
+    ArrayCall(id, _open, index, _close) {
       //mustBeTypeNumeral(index, { at: index})
-        return new core.ArrayCall(id.rep(), index.rep())
+      return new core.ArrayCall(id.rep(), index.rep())
     },
     BooleanVal(bool) {
       return bool.rep()

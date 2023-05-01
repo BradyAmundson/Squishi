@@ -1,0 +1,4 @@
+pencil x = ["hello", "world"];
+[1, 2].loop item:
+  speak(item);
+stop

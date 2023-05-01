@@ -16,7 +16,7 @@ while a:
     break;
 stop
 
-while false:
+while true:
   if true:
     break;
   else

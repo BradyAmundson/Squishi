@@ -5,6 +5,7 @@ import * as core from "../src/core.js"
 const x = new core.Variable("x", core.Type.INT)
 const y = new core.Variable("y", core.Type.INT)
 const z = new core.Variable("z", core.Type.INT)
+const a = new core.Variable("a", core.Type.BOOLEAN)
 const emptyString = new core.StringLiteral("", core.Type.STRING)
 const onePlusTwo = new core.BinaryExpression("+", 1, 2, core.Type.INT)
 const xpp = new core.AssignmentStatement(
@@ -17,6 +18,8 @@ const less = (x, y) => new core.BinaryExpression("<", x, y, core.Type.BOOLEAN)
 const or = (...d) =>
   d.reduce((x, y) => new core.BinaryExpression("or", x, y, core.Type.BOOLEAN))
 const array = (...elements) => new core.ArrayExpression(elements)
+
+const returnX = new core.ReturnStatement(x)
 
 const forLoop = [
   new core.ForStatement(
@@ -45,6 +48,9 @@ const forLoop_partialUnroll = [
     [new core.VariableDeclaration(y, 0)]
   ),
 ]
+
+const intFun = (body) =>
+  new core.FunctionDeclaration(new core.Function("func", []), [], [body])
 const tests = [
   ["optimizes +0", new core.BinaryExpression("+", x, 0), x],
   ["optimizes -0", new core.BinaryExpression("-", x, 0), x],
@@ -136,11 +142,17 @@ const tests = [
       ]
     ),
   ],
+  [
+    "optimizes in functions",
+    intFun(new core.ReturnStatement(opo)),
+    intFun(new core.ReturnStatement(opo)),
+  ],
 
   [
     "passes through nonoptimizable constructs",
     ...Array(2).fill([
       new core.Program([new core.ShortReturnStatement()]),
+      new core.Program([new core.ReturnStatement(5)]),
       new core.VariableDeclaration(z, 0),
       new core.AssignmentStatement(
         x,
@@ -152,6 +164,15 @@ const tests = [
         new core.StringLiteral("hello world", core.Type.String),
         opo
       ),
+      new core.PrintStatement("hello"),
+      new core.IfStatementShort(x, []),
+      new core.IfStatement(x, [], []),
+      new core.Conditional(
+        new core.PrintStatement(x),
+        new core.Variable("a", core.Type.BOOLEAN),
+        new core.PrintStatement(x)
+      ),
+      new core.ArrayCall(array, 3),
     ]),
   ],
 ]

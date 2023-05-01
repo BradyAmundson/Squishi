@@ -51,6 +51,7 @@ Squishi {
     				| Exp8
     Exp8			= "[" Exp "]" --brackets
                     | Exp9
+                    | "-" Exp9 --negatives
     Exp9            = "(" Exp ")"      --parens
                     | ArrayCall
     				| Term

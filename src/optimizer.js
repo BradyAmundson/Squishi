@@ -15,6 +15,9 @@ const optimizers = {
     p.statements = optimize(p.statements)
     return p
   },
+  PrintStatement(s) {
+    return s
+  },
   VariableDeclaration(d) {
     d.variable = optimize(d.variable)
     d.initializer = optimize(d.initializer)
@@ -26,6 +29,12 @@ const optimizers = {
     if (s.source === s.target) {
       return []
     }
+    return s
+  },
+  IfStatementShort(s) {
+    return s
+  },
+  IfStatement(s) {
     return s
   },
   BinaryExpression(e) {
@@ -115,6 +124,15 @@ const optimizers = {
     }
     return s
   },
+  FunctionDeclaration(f) {
+    return f
+  },
+  Call(c) {
+    return c
+  },
+  // Arguments(args) {
+  //   return args
+  // },
   ArrayExpression(e) {
     e.elements = optimize(e.elements)
     return e
@@ -141,7 +159,22 @@ const optimizers = {
   BreakStatement(s) {
     return s
   },
+  ReturnStatement(s) {
+    return s
+  },
   ShortReturnStatement(s) {
     return s
+  },
+  // id(chars) {
+  //   return chars
+  // },
+  // Var(id) {
+  //   return id
+  // },
+  Conditional(e) {
+    return e
+  },
+  ArrayCall(e) {
+    return e
   },
 }

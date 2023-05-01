@@ -19,6 +19,7 @@ const semanticChecks = [
   ],
   ["integer loop", "10.loop item: speak(item); stop"],
   ["string loop", '"what up".loop item: speak(item); stop'],
+  ["string loop", '["hello", "world"].loop item: speak(item); stop'],
   ["outer variable", "pencil x=1; while false: speak(x); stop"],
   [
     "for statement",
@@ -33,6 +34,7 @@ const semanticChecks = [
   ["and", "speak(true and false);"],
   ["short if", "pencil x = 2; if x == 2: x = 3; stop"],
   ["array", 'pencil x = ["hello"];'],
+  ["diff type array elements", "speak([3,3.0]);"],
 
   //   ["variables can be reassigned", "let x = 1; x = x * 5 / ((-3) + x);"],
   //   [
@@ -64,6 +66,11 @@ const semanticErrors = [
     /Expected a boolean/,
   ],
   [
+    "else if no boolean",
+    "if true: speak(x*5); else if 1: speak(x*6); stop",
+    /Expected a boolean/,
+  ],
+  [
     "mismatched types",
     "speak(5 > true);",
     /Operands do not have the same type/,
@@ -75,7 +82,13 @@ const semanticErrors = [
   ],
   ["bad types for not", 'speak(!"hello");', /Expected a boolean/],
   ["bad types for -", "speak(false - 1);", /Expected a number/],
+  [
+    "bad types for *",
+    "speak(2 * false);",
+    /Operands do not have the same type/,
+  ],
   ["bad types for <", "speak(false<1);", /Operands do not have the same type/],
+  ["assign bad type", "pencil x = 1; x = true;", /x is not of type boolean/],
   [
     "Too many args",
     "f multiply x, y: pencil z = x * y; return z; stop\npencil p = 11; pencil q = 2; pencil r = 3; multiply: p, q, r;",
