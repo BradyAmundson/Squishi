@@ -192,10 +192,7 @@ Program.prototype[util.inspect.custom] = function () {
 
 // Throw an error message that takes advantage of Ohm's messaging
 export function error(message, node) {
-  if (node) {
-    throw new Error(`${node.at.source.getLineAndColumnMessage()}${message}`)
-  }
-  throw new Error(message)
+  throw new Error(`${node.at.source.getLineAndColumnMessage()}${message}`)
 }
 
 // String.prototype.type = Type.STRING

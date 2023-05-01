@@ -324,7 +324,6 @@ export default function analyze(sourceCode) {
       const [x, o, y] = [left.rep(), op.sourceString, right.rep()]
       if (context.function === null) {
         mustHaveNumericType(x, { at: left })
-        left.parent?.right.parent?.mustBeTheSameType(x, y, { at: left })
         mustBeTheSameType(x, y, { at: left })
       }
       return new core.BinaryExpression(o, x, y, x.type)

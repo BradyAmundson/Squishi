@@ -107,8 +107,7 @@ const optimizers = {
     if (operator === "<") {
       for (let i = 0; i < numIterations; i++) {
         unrolled.push(new core.AssignmentStatement(iterator, i))
-        for (let j = 0; j < s.consequence.length; j++) {
-          let currentStatement = s.consequence[j]
+        for (let currentStatement of s.consequence) {
           if (currentStatement.constructor.name === "AssignmentStatement") {
             let unrolledAssignment = new core.AssignmentStatement(
               currentStatement.target,
@@ -130,9 +129,6 @@ const optimizers = {
   Call(c) {
     return c
   },
-  // Arguments(args) {
-  //   return args
-  // },
   ArrayExpression(e) {
     e.elements = optimize(e.elements)
     return e
@@ -165,12 +161,6 @@ const optimizers = {
   ShortReturnStatement(s) {
     return s
   },
-  // id(chars) {
-  //   return chars
-  // },
-  // Var(id) {
-  //   return id
-  // },
   Conditional(e) {
     return e
   },

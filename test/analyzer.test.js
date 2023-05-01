@@ -157,6 +157,9 @@ const expected = `   1 | Program statement=[#2,#4,#7,#12,#14,#16,#20]
   26 | BinaryExpression op='+' left='x' right=2`
 
 describe("The analyzer", () => {
+  it("throws on a syntax error", () => {
+    assert.throws(() => analyze("while(true) {"), /Line 1, col 13/)
+  })
   for (const [scenario, source] of semanticChecks) {
     it(`recognizes ${scenario}`, () => {
       assert.ok(analyze(source))

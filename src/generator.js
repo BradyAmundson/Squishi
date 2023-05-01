@@ -8,7 +8,7 @@ export default function generate(program) {
       if (!mapping.has(entity)) {
         mapping.set(entity, mapping.size + 1)
       }
-      return `${entity.name ?? entity.description}_${mapping.get(entity)}`
+      return `${entity.name}_${mapping.get(entity)}`
     }
   })(new Map())
 
@@ -127,9 +127,6 @@ export default function generate(program) {
     },
   }
 
-  let randomCalled = false
   gen(program)
-  if (randomCalled)
-    output.push("function _r(a){return a[~~(Math.random()*a.length)]}")
   return output.join("\n")
 }
