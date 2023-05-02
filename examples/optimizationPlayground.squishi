@@ -1,0 +1,24 @@
+pencil x = 0;
+pencil y = 1;
+for pencil z = 0; stop z < 3 fastfwd z = z + 1;
+  x = x + 1;
+stop
+
+pencil a = 10;
+a = a;
+
+pencil i = 1;
+"".loop item:
+  i = i + 1;
+stop
+
+while false:
+    break;
+stop
+
+// folding and strength reductions
+pencil foldingBool = 5 < 8;
+pencil number = 10;
+number = number + 0;
+number = 0 + 4;
+number = 20 / 4;

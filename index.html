@@ -1,183 +1,334 @@
-<head>
-	<style>
-	  body {
-		background-color: #f7edc8;
-	  }
-  
-	  img {
-	      display: block;
-	      margin: 0 auto;
-	      border: 5px solid #ffd700;
-	      /* Gold */
-	      border-radius: 15px;
-	      box-shadow: 0 0 10px #ffd700;
-	      /* Gold */
-	      transition: transform 0.2s ease-in-out;
-	  }
-
-	  img:hover {
-	      transform: scale(1.1);
-	  }
-  
-	  h1 {
-		color: #f5c411;
-		font-size: 300%;
-		font-family: "Gill Sans", sans-serif;
-		-webkit-text-stroke-width: 2px;
-		-webkit-text-stroke-color: white;
-		text-align: center;
-	  }
-  
-	  p {
-		font-family: "Gill Sans", sans-serif;
-		font-size: 120%;
-		text-align: center;
-	  }
-  
-	  #welcome {
-		-webkit-text-stroke-width: 1px;
-		-webkit-text-stroke-color: black;
-	  }
-  
-	  #bio {
-		background-color: #07b0b0;
-		color: white;
-		margin: 40px;
-		height: 400px;
-		border: 0.5rem outset black;
-	  }
-  
-	  h3 {
-		background-color: white;
-		color: #07b0b0;
-		text-align: center;
-	  }
-  
-	  h2 {
-		text-align: center;
-		margin: -10px;
-	  }
-  
-	  #row {
-		display: grid;
-		height: 500px;
-		grid-template-columns: repeat(3, 1fr);
-		grid-template-rows: 100px;
-  
-	  }
-	</style>
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <title>Squishi</title>
+    <link rel="icon" type="image/x-icon" href="/assets/squishi_logo.jpeg" />
   </head>
-  
+
   <body>
-	<a href="https://github.com/BradyAmundson/Squishi">
-	  <img src="./assets/squishi_logo.jpeg" alt="Squishi Logo" width="400" height="400">
-	</a>
-	<h1>Squishi</h1>
-	<div id="welcome">
-	  <p>
-		Welcome to Squishi, a coding language based off of all of our favorite emojis and motivated by efficiency and
-		simplicity.
-	  </p>
-	</div>
-	<p>Squishi is a coding language that was created with the goal of being simpler, cleaner, and more visually intuitive
-	  than other programming languages. One of the key priorities of Squishi is to use concise syntax, which means that
-	  the language is designed to be easy to read and write. Additionally, Squishi aims to make advanced programming
-	  features such as list comprehension and class merging more accessible to programmers of all levels.
-	</p>
-	</n>
-	<p>
-	  One unique aspect of Squishi is the use of emojis in the language. We, the creators of Squishi believe that pictures
-	  are worth a thousand words, and so they have implemented emojis into the language as a way of making the purpose of
-	  each function more understandable. This approach can be particularly helpful for those who are just starting to
-	  explore programming, as it provides a more visual learning tool.
-	</p>
-	</n>
-	<p>
-	  For example, the 🫳 emoji may be used to represent a list or an array, while the 🎤 emoji could represent a function
-	  that has something to do with audio or sound. By using emojis in this way, Squishi aims to make programming more
-	  intuitive and less intimidating for beginners, while also making it more expressive and enjoyable for experienced
-	  programmers.
-	</p>
-	<h2>Example Code</h2>
-	<ul>
-	  <pre>
-	<code>
-	  while y:
-		x = x + 1;
-		if x == 3:
-		  break;
-		else
-		  y = false;
-		stop
-	  stop
-	</code>
-  </pre>
-	</ul>
-	<ul>
-	  <pre>
-	<code>
-	  10.loop item:
-		  speak(item);
-	  stop
-	  
-	  "what up".loop item:
-		  speak(item);
-	  stop
-	</code>
-  </pre>
-	</ul>
-	<ul>
-	  <pre>
-	<code>
-	  //comment
-	  f shortReturn:
-		return;
-	  stop
-	</code>
-  </pre>
-	</ul>
-	<ul>
-	  <pre>
-	<code>
-	  pencil x = 17;
-	  x = 15;
-	  x = "hi";
-	  speak(x);
-	  pencil z = "hello";
-	  pencil y = true;
-	</code>
-  </pre>
-	</ul>
-	<ul>
-	  <pre>
-	<code>
-	  f multiply x, y:
-		pencil z = x * y;
-		return z;
-	  stop
-	</code>
-  </pre>
-	</ul>
-  
-	<h2>Squishi Authors</h2>
-	<div id="row">
-	  <div id="bio">
-		<h3>Brady Amundson</h3>
-		<img src="">
-		<p>Brady is a slay engineer from Minnesota with an affinity for skiing</p>
-	  </div>
-	  <div id="bio">
-		<h3>Makena Robison</h3>
-		<img src="">
-		<p>Makena dances and is from vegas</p>
-	  </div>
-	  <div id="bio">
-		<h3>Tori Wei</h3>
-		<img src="">
-		<p>Tori is this really cool SOC president and graphic designer</p>
-	  </div>
-	</div>
-  
-  
-  
+    <a href="https://github.com/BradyAmundson/Squishi">
+      <img
+        src="./assets/squishi_logo.jpeg"
+        alt="Squishi Logo"
+        width="400"
+        height="400"
+      />
+    </a>
+    <h1>Squishi</h1>
+    <div id="welcome">
+      <p>
+        Welcome to Squishi, a programming language motivated by efficiency,
+        simplicity, and fun.
+      </p>
+    </div>
+    <p>
+      Squish all you need to know into less lines of code! Squishi was created
+      with the goal of being simple, clean, and visually intuitive. One of the
+      key priorities of Squishi was to use concise syntax, to have this language
+      be easy to read and write. The syntax was partly inspired by physical
+      actions and commands to make our language easy to learn, especially for
+      beginners. Squishi's simplicity means you'll spend less time typing and
+      more time actually programming! After using Squishi, you'll be as happy as
+      our logo's emojis 😁
+    </p>
+
+    <h2>Squishi Basics</h2>
+    <p>Features:</p>
+    <ul>
+      <li>Action-like keywords</li>
+      <li>Hybrid typing: static, except functions are dynamic</li>
+      <li>Strong typing</li>
+      <li>Type inference</li>
+      <li>Loopi: Simple looping for integers, Strings, and arrays</li>
+    </ul>
+    <p>Optimizations</p>
+    <ul>
+      <li>constant folding</li>
+      <li>strength reductions (+0, -0, *0, *1, etc.)</li>
+      <li>for-loop unrolling (only with assignments and '&lt;' operator)</li>
+      <li>Loopi over empty string is no-op</li>
+      <li>assignments to self (x = x) turn into no-ops</li>
+    </ul>
+    <h2>We All Makes Mistakes – Types of Static Semantic Errors</h2>
+    <ul>
+      <li>Declared an already existing variable</li>
+      <li>Used non-initialized variables</li>
+      <li>Type mismatch</li>
+      <li>Comparing non-boolean values</li>
+      <li>Loopi iteration with incorrect type</li>
+      <li>Break outside a loop</li>
+      <li>Return outside of function</li>
+      <li>Incorrect number of arguments</li>
+    </ul>
+    <p>
+      View our grammar
+      <a
+        href="https://github.com/BradyAmundson/Squishi/blob/main/src/squishi.ohm"
+        >here</a
+      >.
+    </p>
+
+    <h2>Syntax</h2>
+    <div id="syntax">
+      <h3>Variable Declaration and Assignments</h3>
+
+      <table>
+        <tr>
+          <th>JavaScript</th>
+          <th>Squishi</th>
+        </tr>
+        <tr>
+          <td>
+            <pre><code>let x = "Squish"
+x = "Squishi"</code></pre>
+          </td>
+          <td>
+            <pre><code>pencil x = "Squish";
+x = "Squishi";</code></pre>
+          </td>
+        </tr>
+      </table>
+
+      <h3>Print Statements</h3>
+
+      <table>
+        <tr>
+          <th>JavaScript</th>
+          <th>Squishi</th>
+        </tr>
+        <tr>
+          <td>
+            <pre><code>console.log(“Hello world!”)</code></pre>
+          </td>
+          <td>
+            <pre><code>speak(“Hello world!”);</code></pre>
+          </td>
+        </tr>
+      </table>
+
+      <h3>Functions</h3>
+
+      <table>
+        <tr>
+          <th>JavaScript</th>
+          <th>Squishi</th>
+        </tr>
+        <tr>
+          <td>
+            <pre><code>function determineEven(x) {
+  return x % 2 === 0
+}
+determineEven(5)</code></pre>
+          </td>
+          <td>
+            <pre><code>f determineEven x:
+  return x % 2 == 0;
+stop
+determineEven: 5;</code></pre>
+          </td>
+        </tr>
+      </table>
+
+      <h3>Loops</h3>
+
+      <table>
+        <tr>
+          <th>JavaScript</th>
+          <th>Squishi</th>
+        </tr>
+        <tr>
+          <td>
+            <pre><code>let x = 0
+while (x &lt; 3) {
+  x = x + 1
+}</code></pre>
+          </td>
+          <td>
+            <pre><code>pencil x = 0;
+while x &lt; 3:
+  x = x + 1;
+stop</code></pre>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <pre><code>for (let i = 0; i &lt; 5; i = i + 1) {
+  console.log(i)
+}</code></pre>
+          </td>
+          <td>
+            <pre><code>for pencil i = 0; stop i &lt; 5 fastfwd i = i + 1;
+    speak(i);
+stop</code></pre>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <pre><code>for (const item of ["hello", "world"]) {
+  console.log(item)
+}</code></pre>
+          </td>
+          <td>
+            <pre><code>["hello", "world"].loop item:
+  speak(item);
+stop</code></pre>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <h2>More Code Examples</h2>
+    <h3>Prime Numbers</h3>
+    <table>
+      <tr>
+        <th>JavaScript</th>
+        <th>Squishi</th>
+      </tr>
+      <tr>
+        <td>
+          <pre><code>
+            
+function isPrime(number) {
+  if ((number > 1)) {
+    let i = 2;
+    while (i < number_1) {
+      if ((number % i) === 0) {
+        console.log("not prime");
+        return;
+      }
+      i = (i + 1);
+    }
+  }
+  console.log("prime");
+  return;
+}
+
+isPrime(5);
+isPrime(15);
+          
+          </code></pre>
+        </td>
+        <td>
+          <pre><code>
+f isPrime number:
+  if number > 1:
+    for pencil i = 2; stop i < number fastfwd i = i + 1;
+      if number % i == 0:
+        speak("not prime");
+        return;
+      stop
+    stop
+  stop
+  speak("prime");
+  return;
+stop
+
+isPrime: 5;
+isPrime: 15;
+        </code></pre>
+        </td>
+      </tr>
+    </table>
+
+    <h3>Binary Search</h3>
+    <table>
+      <tr>
+        <th>JavaScript</th>
+        <th>Squishi</th>
+      </tr>
+      <tr>
+        <td>
+          <pre><code>
+            
+function binarySearch(arr, toFind, arrLength) {
+  let left = 0;
+  let right = arrLength / 2;
+  while (left <= right) {
+    let mid = (left + right) / 2;
+    mid = mid - (mid % 1);
+    let midVal = arr[mid];
+    if (midVal === toFind) {
+      return mid;
+    } else {
+      if (midVal < toFind) {
+        left = mid + 1;
+      } else {
+        right = mid - 1;
+      }
+    }
+  }
+  return -1;
+}
+          
+          </code></pre>
+        </td>
+        <td>
+          <pre><code>
+ f binarySearch arr, toFind, arrLength:
+    pencil left = 0;
+    pencil right = arrLength / 2;
+
+    while(left <= right):
+        pencil mid = (left + right) / 2;
+        mid = mid - (mid % 1);
+        pencil midVal = arr[mid];
+
+        if( midVal == toFind ):
+            return mid;
+        else if( midVal < toFind ):
+            left = mid + 1;
+        else
+            right = mid - 1;
+        stop
+        stop
+    stop
+
+    return -1;
+stop
+        </code></pre>
+        </td>
+      </tr>
+    </table>
+
+    <h2>Squishi Authors</h2>
+    <div id="row">
+      <div class="bio">
+        <h4>Brady Amundson</h4>
+        <a href="https://github.com/BradyAmundson"
+          ><img class="bioImg" src="assets/brady.jpeg"
+        /></a>
+        <p>
+          Brady is a junior Computer Science major with a screenwriting minor.
+          He likes to ski in his free time!
+        </p>
+      </div>
+      <div class="bio">
+        <h4>Makena Robison</h4>
+        <a href="https://github.com/makenakalei"
+          ><img class="bioImg" src="assets/makena.jpeg"
+        /></a>
+        <p>
+          Makena is a junior Computer Science and Dance double major. She enjoys
+          listening to new music in her free time!
+        </p>
+      </div>
+      <div class="bio">
+        <h4>Tori Wei</h4>
+        <a href="https://github.com/toriwei"
+          ><img class="bioImg" src="assets/tori.png"
+        /></a>
+        <p>
+          Tori is a junior Computer Science major with minors in Studio Arts and
+          Women's and Gender Studies. She likes to play soccer!
+        </p>
+      </div>
+    </div>
   </body>
+</html>

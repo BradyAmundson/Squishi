@@ -1,4 +1,0 @@
-pencil x = "world";
-"hi".loop item:
-  x = item;
-stop
