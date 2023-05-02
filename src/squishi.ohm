@@ -1,6 +1,6 @@
 Squishi {
   Program         = Statement+
-  Statement 		  = PrintStatement
+  Statement       = PrintStatement
                   | VarDeclaration
                   | AssignStmt
                   | ForStmt
@@ -13,43 +13,43 @@ Squishi {
                   | WhileStmt
                   | ForStmt
                   | LoopStmt
-  PrintStatement 	= speak Exp ";"
-  VarDeclaration	= pencil id "=" Exp ";"
-  AssignStmt		  = id "=" Exp ";"
-  ForStmt			    = for VarDeclaration stop Exp fastfwd AssignStmt (Statement)+ stop
+  PrintStatement  = speak Exp ";"
+  VarDeclaration  = pencil id "=" Exp ";"
+  AssignStmt      = id "=" Exp ";"
+  ForStmt         = for VarDeclaration stop Exp fastfwd AssignStmt (Statement)+ stop
   LoopStmt        = Term ".loop" id ":" Statement+ stop
-  WhileStmt		    = while Exp ":" Statement+ stop
+  WhileStmt       = while Exp ":" Statement+ stop
   IfStmt          = if Exp ":" Statement+ else Statement+ stop            --long
                   | if Exp ":" Statement+ stop                            --short
-                  | if Exp ":" Statement+ else IfStmt --elseIf
+                  | if Exp ":" Statement+ else IfStmt                     --elseIf
   ElseStmt        = else ":" Statement+ stop
   ElseIfStmt      = elseIf Exp ":" Statement+ stop
   Function        = f id ListOf<Param, ","> ":" Statement+ stop
   Param           = id
   Call            = id ":" Arguments
   Arguments       = ListOf<Exp, ",">
-  id				      = ~keyword idchar+
-  idchar			    = alnum
-  keyword			    = speak | pencil | for | step | stop | fastfwd | while | true | false | else | if | elseIf | loop
-  Var				      = id
+  id              = ~keyword idchar+
+  idchar          = alnum
+  keyword         = speak | pencil | for | step | stop | fastfwd | while | true | false | else | if | elseIf | loop
+  Var             = id
 
   Exp             = "!" Exp8                                              --unary
                   | Exp1
   Exp1            = Exp1 "if" Exp1 "otherwise" Exp                        --ternary
                   | Exp2
-  Exp2			      = Exp2 "or" Exp3					                              --or
+  Exp2            = Exp2 "or" Exp3                                        --or
                   | Exp3
-  Exp3			      = Exp3 "and" Exp4				                                --and
+  Exp3            = Exp3 "and" Exp4                                       --and
                   | Exp4
-  Exp4			      = Exp4 ("<=" | "<" | "==" | "!=" | ">=" | ">") Exp5     --op
+  Exp4            = Exp4 ("<=" | "<" | "==" | "!=" | ">=" | ">") Exp5     --op
                   | Exp5
-  Exp5			      = Exp5 ("+" | "-") Exp6                                 --plusminus
+  Exp5            = Exp5 ("+" | "-") Exp6                                 --plusminus
                   | Exp6
-  Exp6			      = Exp6 ("*" | "/" | "%") Exp7                           --multdivmod
+  Exp6            = Exp6 ("*" | "/" | "%") Exp7                           --multdivmod
                   | Exp7
-  Exp7			      = Exp7 "**" Exp8                                        --exponent
+  Exp7            = Exp7 "**" Exp8                                        --exponent
                   | Exp8
-  Exp8			      = "[" Exp "]"                                           --brackets
+  Exp8            = "[" Exp "]"                                           --brackets
                   | Exp9
                   | "-" Exp9                                              --negatives
   Exp9            = "(" Exp ")"                                           --parens
@@ -58,8 +58,8 @@ Squishi {
                   | Call                                                  --call
                   | MethodCall
 
-  BooleanVal		  = true | false
-  Term 			      = numeral
+  BooleanVal      = true | false
+  Term            = numeral
                   | stringliteral
                   | Var
                   | BooleanVal
@@ -68,12 +68,12 @@ Squishi {
 
   MethodCall      = Term "." id ("(" ListOf<Exp, ","> ")")?
   ArrayCall       = Var "[" Term "]"
-  pencil			    = "pencil" ~idchar
-  speak			      = "speak" ~idchar
-  for				      = "for" ~idchar
-  step			      = "step" ~idchar
-  stop			      = "stop" ~idchar
-  fastfwd			    = "fastfwd" ~idchar
+  pencil          = "pencil" ~idchar
+  speak           = "speak" ~idchar
+  for             = "for" ~idchar
+  step            = "step" ~idchar
+  stop            = "stop" ~idchar
+  fastfwd         = "fastfwd" ~idchar
   Array           = "[" ListOf<Term, ","> "]"
   EmptyArray      = "[""]" ":" Term
   while           = "while" ~idchar
@@ -86,7 +86,7 @@ Squishi {
   f               = "f" ~idchar
   break           = "break" ~idchar
   return          = "return" ~idchar
-  numeral 		    = ("-")? digit+ ("." digit+)?
-  stringliteral 	= "\"" (~"\""any)* "\""
-  space      	    += "//" (~"\n" any)*				                            --comment
+  numeral         = ("-")? digit+ ("." digit+)?
+  stringliteral   = "\"" (~"\""any)* "\""
+  space          += "//" (~"\n" any)*                                     --comment
 }
