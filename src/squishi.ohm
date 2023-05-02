@@ -88,5 +88,5 @@ Squishi {
   return          = "return" ~idchar
   numeral 		    = ("-")? digit+ ("." digit+)?
   stringliteral 	= "\"" (~"\""any)* "\""
-  space      	   += "//" (~"\n" any)*				                              --comment
+  space      	    += "//" (~"\n" any)*				                            --comment
 }
